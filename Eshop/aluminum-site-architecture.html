@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AluminumSite — Architecture & Implementation Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #0a0c0f;
+    --surface:    #111318;
+    --surface2:   #181c23;
+    --border:     #1e2530;
+    --accent:     #c8a96e;       /* warm gold — matches aluminium / premium */
+    --accent2:    #4a9eff;       /* tech blue */
+    --accent3:    #2dcc7a;       /* green success */
+    --warn:       #ff6b35;
+    --text:       #e8ecf0;
+    --muted:      #7a8694;
+    --tag-bg:     #1a2030;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .5;
+  }
+
+  /* ─── HEADER ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 60px 60px;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(200,169,110,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; letter-spacing: .2em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-label::before {
+    content: ''; display: block; width: 40px; height: 1px; background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 800; line-height: 1.0;
+    letter-spacing: -.03em;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted); max-width: 560px;
+    margin-bottom: 48px; font-weight: 300;
+  }
+
+  .meta-row {
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .meta-item strong {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+  }
+  .meta-item span {
+    font-size: 13px; color: var(--accent);
+  }
+
+  .diagonal-line {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+    opacity: .4;
+  }
+
+  /* ─── NAV SIDEBAR ─── */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+
+  .nav {
+    position: sticky; top: 0;
+    height: 100vh; overflow-y: auto;
+    padding: 40px 24px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .nav-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px;
+  }
+
+  .nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 6px;
+    color: var(--muted); text-decoration: none;
+    font-size: 12.5px; font-weight: 400;
+    transition: all .2s;
+    margin-bottom: 2px;
+  }
+  .nav a:hover, .nav a.active {
+    color: var(--text); background: var(--surface2);
+  }
+  .nav a .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border); flex-shrink: 0; transition: background .2s;
+  }
+  .nav a:hover .dot, .nav a.active .dot { background: var(--accent); }
+
+  .nav-section { margin-top: 24px; }
+
+  /* ─── MAIN CONTENT ─── */
+  .main { padding: 60px 64px; max-width: 1100px; }
+
+  section { margin-bottom: 100px; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 700; letter-spacing: -.02em;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 600;
+    margin-bottom: 10px; color: var(--text);
+  }
+
+  h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px;
+  }
+
+  p { color: var(--muted); margin-bottom: 14px; font-size: .93rem; }
+  p strong { color: var(--text); font-weight: 500; }
+
+  /* ─── CARDS ─── */
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px; margin-top: 28px;
+  }
+  .card-grid-2 { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+    transition: border-color .25s, transform .25s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    background: var(--tag-bg); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 14px;
+  }
+
+  .card h3 { font-size: .95rem; margin-bottom: 6px; }
+  .card p { font-size: .83rem; margin-bottom: 0; }
+
+  /* ─── TECH STACK ─── */
+  .stack-row {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;
+  }
+  .tag {
+    padding: 5px 12px; border-radius: 20px;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    background: var(--tag-bg); border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .tag.gold { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,.08); }
+  .tag.blue { border-color: var(--accent2); color: var(--accent2); background: rgba(74,158,255,.08); }
+  .tag.green { border-color: var(--accent3); color: var(--accent3); background: rgba(45,204,122,.08); }
+  .tag.warn { border-color: var(--warn); color: var(--warn); background: rgba(255,107,53,.08); }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow {
+    display: flex; align-items: stretch; gap: 0;
+    margin-top: 32px; overflow-x: auto; padding-bottom: 8px;
+  }
+  .flow-step {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+    min-width: 150px; flex: 1;
+    display: flex; flex-direction: column; gap: 6px;
+    position: relative;
+  }
+  .flow-step + .flow-step { border-radius: 0 10px 10px 0; border-left: none; }
+  .flow-step:first-child { border-radius: 10px 0 0 10px; }
+  .flow-arrow {
+    display: flex; align-items: center; color: var(--accent); font-size: 20px;
+    padding: 0 4px; flex-shrink: 0;
+  }
+  .flow-num {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: var(--accent); letter-spacing: .1em;
+  }
+  .flow-step h4 { font-size: .75rem; margin-bottom: 0; }
+  .flow-step p { font-size: .78rem; margin: 0; }
+
+  /* ─── PAGE ARCHITECTURE TABLE ─── */
+  .pages-grid {
+    display: grid; grid-template-columns: 1fr;
+    gap: 2px; margin-top: 24px;
+  }
+  .page-row {
+    display: grid; grid-template-columns: 220px 1fr 160px 120px;
+    gap: 16px; padding: 14px 18px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 0; transition: background .2s;
+    align-items: start;
+  }
+  .page-row:first-child { border-radius: 10px 10px 0 0; }
+  .page-row:last-child { border-radius: 0 0 10px 10px; }
+  .page-row:hover { background: var(--surface2); }
+  .page-row.header-row {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+    background: var(--tag-bg); cursor: default;
+  }
+  .page-row .url {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--accent2);
+  }
+  .page-row .title { font-size: .88rem; font-weight: 500; color: var(--text); }
+  .page-row .desc { font-size: .8rem; color: var(--muted); }
+  .priority-dot {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .78rem;
+  }
+  .priority-dot::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; display: block;
+  }
+  .priority-dot.p1::before { background: var(--accent3); }
+  .priority-dot.p2::before { background: var(--accent); }
+  .priority-dot.p3::before { background: var(--muted); }
+
+  /* ─── CODE BLOCK ─── */
+  pre {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; overflow-x: auto;
+    font-family: 'Space Mono', monospace; font-size: 12px;
+    line-height: 1.65; color: #a8b8c8; margin-top: 16px;
+  }
+  .code-title {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    color: var(--muted); margin-bottom: -8px; margin-top: 20px;
+    letter-spacing: .1em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .code-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .keyword { color: var(--accent); }
+  .str { color: var(--accent3); }
+  .comment { color: #3d5166; }
+  .type { color: var(--accent2); }
+
+  /* ─── MILESTONE TABLE ─── */
+  .milestone-table {
+    width: 100%; border-collapse: collapse; margin-top: 24px;
+    font-size: .85rem;
+  }
+  .milestone-table th {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+    padding: 10px 16px; text-align: left;
+    background: var(--tag-bg); border: 1px solid var(--border);
+  }
+  .milestone-table td {
+    padding: 12px 16px; border: 1px solid var(--border);
+    color: var(--muted); background: var(--surface);
+    vertical-align: top;
+  }
+  .milestone-table tr:hover td { background: var(--surface2); }
+  .milestone-table .phase-name { color: var(--text); font-weight: 500; }
+  .milestone-table .days {
+    font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent);
+  }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { margin-top: 16px; }
+  .checklist-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: .88rem;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-icon {
+    width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; margin-top: 1px;
+  }
+  .check-icon.done { background: rgba(45,204,122,.15); color: var(--accent3); }
+  .check-icon.warn { background: rgba(255,107,53,.15); color: var(--warn); }
+  .check-icon.info { background: rgba(74,158,255,.15); color: var(--accent2); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 0 0 60px; position: relative; overflow: hidden;
+  }
+  .divider::after {
+    content: ''; position: absolute; left: 0; top: 0;
+    width: 80px; height: 1px; background: var(--accent);
+  }
+
+  /* ─── CALLOUT ─── */
+  .callout {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0; padding: 18px 20px;
+    margin: 20px 0; font-size: .88rem;
+  }
+  .callout.blue { border-left-color: var(--accent2); }
+  .callout.green { border-left-color: var(--accent3); }
+  .callout.warn { border-left-color: var(--warn); }
+  .callout strong { color: var(--text); }
+
+  /* ─── COMPONENT DEMO ─── */
+  .component-preview {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-top: 24px;
+  }
+  .component-preview-bar {
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .dot-red, .dot-yellow, .dot-green-win {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green-win { background: #28c840; }
+  .component-preview-bar span {
+    margin-left: auto; font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--muted);
+  }
+
+  /* ─── SEO TABLE ─── */
+  .seo-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px; margin-top: 20px;
+  }
+  .seo-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px;
+  }
+  .seo-item .metric {
+    font-family: 'Space Mono', monospace; font-size: 22px;
+    color: var(--accent); font-weight: 700; display: block; margin-bottom: 4px;
+  }
+  .seo-item .label { font-size: .78rem; color: var(--muted); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border); padding: 40px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: .8rem;
+  }
+  footer strong { color: var(--accent); }
+
+  /* Print */
+  @media print {
+    .nav { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    .main { padding: 20px; }
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .nav { display: none; }
+    .main { padding: 32px 20px; }
+    .hero { padding: 60px 20px 40px; }
+    .page-row { grid-template-columns: 1fr; }
+    footer { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Architecture Blueprint — v1.0</div>
+  <h1>Aluminum Site<br><span>Full Implementation</span><br>Specification</h1>
+  <p class="hero-sub">Complete technical architecture, page structure, tech stack, SEO strategy, and sprint plan for a professional aluminum installations & retail website.</p>
+  <div class="meta-row">
+    <div class="meta-item"><strong>Prepared for</strong><span>2× Junior Front-End Developers</span></div>
+    <div class="meta-item"><strong>Document</strong><span>aluminum-site-architecture v1.0</span></div>
+    <div class="meta-item"><strong>Framework</strong><span>Next.js 14 + Sanity CMS</span></div>
+    <div class="meta-item"><strong>Estimated sprints</strong><span>6 weeks</span></div>
+  </div>
+  <div class="diagonal-line"></div>
+</section>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="nav">
+    <div class="nav-title">Contents</div>
+    <div class="nav-section">
+      <a href="#overview"><span class="dot"></span>01. Overview</a>
+      <a href="#client-discovery"><span class="dot"></span>02. Client Discovery</a>
+      <a href="#tech-stack"><span class="dot"></span>03. Tech Stack</a>
+      <a href="#architecture"><span class="dot"></span>04. App Architecture</a>
+      <a href="#pages"><span class="dot"></span>05. Pages & Routes</a>
+      <a href="#cms"><span class="dot"></span>06. CMS Schema</a>
+      <a href="#auth"><span class="dot"></span>07. Auth & Roles</a>
+      <a href="#seo"><span class="dot"></span>08. SEO Strategy</a>
+      <a href="#performance"><span class="dot"></span>09. Performance</a>
+      <a href="#design"><span class="dot"></span>10. Design System</a>
+      <a href="#sprint"><span class="dot"></span>11. Sprint Plan</a>
+      <a href="#checklist"><span class="dot"></span>12. Launch Checklist</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── 01 OVERVIEW ── -->
+    <section id="overview">
+      <div class="section-label">01 — Overview</div>
+      <h2>Project Summary</h2>
+      <p>This document is the single source of truth for two junior front-end developers building a professional website for an aluminum installations company (κουφώματα, τζαμαρίες, πόρτες ασφαλείας, στέγαστρα, κιγκλιδώματα). The prior planning agent produced comprehensive client-discovery questions and a technology comparison. This blueprint synthesises both into a concrete, actionable specification.</p>
+
+      <div class="callout green">
+        <strong>Core goal:</strong> Generate inbound leads (phone calls + appointment form submissions) from local homeowners, architects, and construction contractors. Everything — architecture, copy, CTA placement, SEO — serves this one goal.
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🎯</div>
+          <h3>Primary Audience</h3>
+          <p>Local homeowners renovating, construction contractors, and architects seeking technical aluminum solutions.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📍</div>
+          <h3>Geographic Scope</h3>
+          <p>Initially local/regional. Architecture must support multi-city expansion without restructuring.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Success Metric</h3>
+          <p>Measurable increase in appointment-form submissions and tracked phone-call conversions within 90 days of launch.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h3>Phase 2 Ready</h3>
+          <p>Architecture is designed to accommodate B2B partner portal (professionals/contractors) in a future phase without rebuilding.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 02 CLIENT DISCOVERY ── -->
+    <section id="client-discovery">
+      <div class="section-label">02 — Client Discovery</div>
+      <h2>Required Client Answers</h2>
+      <p>Collect these before writing a single line of code. The questions below are refined from the planning agent's output — stripped of vague subjective prompts and kept to actionable, decision-driving data.</p>
+
+      <div class="card-grid card-grid-2">
+        <div class="card">
+          <h4>Business Identity</h4>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">1.</strong> Unique differentiator (speed, system brand, 24h service, warranty)?</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">2.</strong> Years in business + number of completed projects?</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">3.</strong> Aluminium systems used: Alumil / Etem / Schuco / Eural / other?</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">4.</strong> Top 3 competitors + their website URLs?</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Services & Revenue</h4>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">5.</strong> Which service brings 80% of revenue? (This leads the homepage.)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">6.</strong> Full service list to finalize navigation categories.</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">7.</strong> Do you offer free survey / site measurement (επιμέτρηση)?</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">8.</strong> Security door partnerships (e.g. Dierre, Mottura)?</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Content Assets</h4>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">9.</strong> How many hi-res project photos exist? (Minimum 30 required.)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">10.</strong> Any before/after photos? (Conversion rate +40%)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">11.</strong> Existing logo & brand colors? (Vector file required.)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">12.</strong> Any certifications or safety/energy ratings to display?</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Technical Preferences</h4>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">13.</strong> Will client update the site themselves? (CMS training needed?)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">14.</strong> Budget range? (Affects hosting tier, auth complexity.)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">15.</strong> B2B partner portal needed now or future? (Auth scope decision.)</li>
+            <li style="font-size:.83rem; color:var(--muted)"><strong style="color:var(--text)">16.</strong> Preferred language: Greek only or Greek + English?</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 03 TECH STACK ── -->
+    <section id="tech-stack">
+      <div class="section-label">03 — Technology</div>
+      <h2>Recommended Tech Stack</h2>
+      <p>Based on the planning agent's JAMstack recommendation and calibrated to two junior developers, here is the final, opinionated stack with rationale for every decision.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">⚛️</div>
+          <h3>Next.js 14 (App Router)</h3>
+          <p>React framework with SSG + ISR. Pages are pre-rendered at build time — lightning fast, SEO-perfect. App Router enables React Server Components for zero client JS on static pages.</p>
+          <div class="stack-row">
+            <span class="tag gold">Primary</span>
+            <span class="tag blue">SSG / ISR</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3>Sanity.io (Headless CMS)</h3>
+          <p>Structured content with real-time preview. Client can update portfolio, edit text, upload photos from a clean dashboard — no code required. Free tier covers this project.</p>
+          <div class="stack-row">
+            <span class="tag gold">Primary</span>
+            <span class="tag green">Free Tier OK</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <h3>Vercel</h3>
+          <p>Zero-config deployment for Next.js. Automatic HTTPS, global CDN, preview deployments on every Git branch push. Hobby plan is free and sufficient for this site's traffic.</p>
+          <div class="stack-row">
+            <span class="tag gold">Primary</span>
+            <span class="tag green">Free Tier OK</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔐</div>
+          <h3>Clerk (Auth — Phase 2)</h3>
+          <p>Handles user accounts, role management, Google/Facebook sign-in. Pre-built React components mean junior devs can add auth in hours, not days. Defer to Phase 2 unless B2B portal is in scope now.</p>
+          <div class="stack-row">
+            <span class="tag">Phase 2</span>
+            <span class="tag blue">Optional</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📧</div>
+          <h3>Resend + React Email</h3>
+          <p>Appointment form submissions trigger transactional emails to the business owner. Resend's free tier supports 3,000 emails/month — more than enough.</p>
+          <div class="stack-row">
+            <span class="tag gold">Required</span>
+            <span class="tag green">Free Tier OK</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <h3>Tailwind CSS v4</h3>
+          <p>Utility-first CSS. Combined with a custom design token layer, ensures consistent spacing, color, and typography across all pages. Much faster for two developers to stay in sync.</p>
+          <div class="stack-row">
+            <span class="tag gold">Required</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖼️</div>
+          <h3>Cloudinary (Images)</h3>
+          <p>Sanity's built-in CDN handles most images, but Cloudinary provides advanced transforms: auto WebP/AVIF conversion, lazy-load blur placeholders, and responsive srcset generation.</p>
+          <div class="stack-row">
+            <span class="tag">Recommended</span>
+            <span class="tag green">Free Tier OK</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Plausible Analytics</h3>
+          <p>Privacy-first analytics (GDPR-compliant, no cookie banner needed). Tracks form submissions, page views, referrers. Lightweight script doesn't hurt Core Web Vitals.</p>
+          <div class="stack-row">
+            <span class="tag">Recommended</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warn" style="margin-top:32px;">
+        <strong>Why not WordPress?</strong> For two junior developers, WordPress seems approachable but becomes a liability. Plugin conflicts, PHP security patches, slow image-heavy pages, and poor Core Web Vitals scores all hurt SEO and the client relationship long-term. The JAMstack approach has a steeper initial learning curve but produces a dramatically faster, safer, and more maintainable site.
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 04 APP ARCHITECTURE ── -->
+    <section id="architecture">
+      <div class="section-label">04 — Architecture</div>
+      <h2>Application Architecture</h2>
+      <p>The data flow between the three pillars: CMS (content), Next.js (rendering), and Vercel (delivery).</p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">01</div>
+          <h4>Sanity Studio</h4>
+          <p>Client adds project, edits text, uploads photos</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-num">02</div>
+          <h4>Sanity CDN</h4>
+          <p>Content API (GROQ queries) + Image CDN</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-num">03</div>
+          <h4>Next.js Build</h4>
+          <p>SSG renders all pages at build time via ISR webhook</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-num">04</div>
+          <h4>Vercel Edge CDN</h4>
+          <p>Static HTML + assets served globally in &lt;50ms</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-num">05</div>
+          <h4>End User</h4>
+          <p>Instant page loads on mobile or desktop</p>
+        </div>
+      </div>
+
+      <div class="code-title">// Project folder structure — Next.js 14 App Router</div>
+      <pre><span class="comment">├── app/                      # Next.js App Router</span>
+<span class="comment">│   ├── layout.tsx            # Root layout (Header, Footer, Analytics)</span>
+<span class="comment">│   ├── page.tsx              # Homepage /</span>
+<span class="comment">│   ├── globals.css           # Tailwind base + design tokens</span>
+<span class="comment">│   ├── (marketing)/</span>
+<span class="comment">│   │   ├── about/page.tsx    # /about</span>
+<span class="comment">│   │   └── contact/page.tsx  # /contact</span>
+<span class="comment">│   ├── services/</span>
+<span class="comment">│   │   ├── page.tsx          # /services (overview grid)</span>
+<span class="comment">│   │   └── [slug]/page.tsx   # /services/[slug] (dynamic)</span>
+<span class="comment">│   ├── projects/</span>
+<span class="comment">│   │   ├── page.tsx          # /projects (portfolio gallery)</span>
+<span class="comment">│   │   └── [slug]/page.tsx   # /projects/[slug] (case study)</span>
+<span class="comment">│   ├── blog/</span>
+<span class="comment">│   │   ├── page.tsx          # /blog (SEO article index)</span>
+<span class="comment">│   │   └── [slug]/page.tsx   # /blog/[slug] (article)</span>
+<span class="comment">│   └── api/</span>
+<span class="comment">│       ├── contact/route.ts  # POST → Resend email</span>
+<span class="comment">│       └── revalidate/route.ts # Sanity webhook → ISR trigger</span>
+<span class="comment">├── components/</span>
+<span class="comment">│   ├── ui/                   # Primitives: Button, Badge, Modal</span>
+<span class="comment">│   ├── sections/             # Page sections: Hero, ServiceGrid, FAQ</span>
+<span class="comment">│   └── layout/               # Header, Footer, MobileMenu</span>
+<span class="comment">├── lib/</span>
+<span class="comment">│   ├── sanity.ts             # Client, token, GROQ queries</span>
+<span class="comment">│   └── email.ts              # Resend helper</span>
+<span class="comment">├── sanity/</span>
+<span class="comment">│   ├── schemas/              # CMS document types</span>
+<span class="comment">│   └── studio/               # Sanity Studio (embedded at /studio)</span>
+<span class="comment">├── public/                   # Static assets, robots.txt, sitemap</span>
+└── <span class="keyword">next.config.ts</span>            <span class="comment"># next/image domains, i18n config</span></pre>
+
+      <div class="code-title">// app/lib/sanity.ts — GROQ query example for projects</div>
+      <pre><span class="keyword">import</span> { createClient } <span class="keyword">from</span> <span class="str">'next-sanity'</span>
+
+<span class="keyword">export const</span> <span class="type">client</span> = createClient({
+  projectId: process.env.<span class="type">NEXT_PUBLIC_SANITY_PROJECT_ID</span>,
+  dataset:   <span class="str">'production'</span>,
+  apiVersion: <span class="str">'2024-01-01'</span>,
+  useCdn: <span class="keyword">true</span>,
+})
+
+<span class="comment">// Fetch all projects with filtering support</span>
+<span class="keyword">export async function</span> <span class="type">getProjects</span>(category?: <span class="type">string</span>) {
+  <span class="keyword">const</span> filter = category
+    ? <span class="str">`&& category == "${category}"`</span>
+    : <span class="str">''</span>
+
+  <span class="keyword">return</span> client.fetch(<span class="str">`
+    *[_type == "project" ${filter}] | order(date desc) {
+      _id, title, slug, category,
+      mainImage { asset->{ url, metadata { lqip, dimensions } } },
+      location, summary, date
+    }
+  `</span>)
+}</pre>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 05 PAGES & ROUTES ── -->
+    <section id="pages">
+      <div class="section-label">05 — Pages & Routes</div>
+      <h2>Full Page Architecture</h2>
+      <p>Every route, its rendering strategy, SEO priority, and the primary Call to Action for each page.</p>
+
+      <div class="pages-grid">
+        <div class="page-row header-row">
+          <span>Route / URL</span>
+          <span>Page Description + CTA</span>
+          <span>Rendering</span>
+          <span>Priority</span>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/</div><div class="title">Homepage</div></div>
+          <div class="desc">Hero with best project image, trust indicators (years/projects), top 3 services, portfolio teaser, partner logos (Alumil etc.), appointment CTA prominent.</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p1">Critical</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/services</div><div class="title">Services Overview</div></div>
+          <div class="desc">Grid of all service categories with icon + short description. Each card links to detail page. CTA: "Request a Quote".</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p1">Critical</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/services/[slug]</div><div class="title">Service Detail</div></div>
+          <div class="desc">Sliding windows, aluminium doors, security doors, pergolas, railings — each gets a dedicated SEO page. Technical specs, gallery, FAQ, inline appointment form.</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p1">Critical</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/projects</div><div class="title">Portfolio Gallery</div></div>
+          <div class="desc">Filterable masonry grid by category (windows, doors, pergolas…). High-res images. Each project has slug for detail page. CTA: "Start your project".</div>
+          <div><span class="tag gold">SSG+ISR</span></div>
+          <div><span class="priority-dot p1">Critical</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/projects/[slug]</div><div class="title">Project Case Study</div></div>
+          <div class="desc">Full photo gallery (before/after), location, system used (Alumil series), installed products, client testimonial if available. Rich structured data for Google.</div>
+          <div><span class="tag gold">SSG+ISR</span></div>
+          <div><span class="priority-dot p2">High</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/about</div><div class="title">Company & Team</div></div>
+          <div class="desc">Company story, years of experience, team photos, certifications, system partner logos (Alumil, Schuco...). Trust-building page. CTA: "See our projects".</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p2">High</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/contact</div><div class="title">Contact + Appointment</div></div>
+          <div class="desc">Phone number prominent. Two-step form: (1) Contact details, (2) Preferred date + service type. Google Maps embed. Business hours. Confirmation email via Resend.</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p1">Critical</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/blog</div><div class="title">SEO Blog</div></div>
+          <div class="desc">Articles targeting local keywords: "κουφώματα αλουμινίου [πόλη]", "τι είναι θερμοδιακοπή", "πόση ώρα παίρνει τοποθέτηση". Drives organic traffic.</div>
+          <div><span class="tag blue">SSG+ISR</span></div>
+          <div><span class="priority-dot p2">High</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/blog/[slug]</div><div class="title">Blog Article</div></div>
+          <div class="desc">Long-form content (1500+ words). Structured data (Article schema). Related services sidebar. CTA: "Book a free measurement".</div>
+          <div><span class="tag blue">SSG+ISR</span></div>
+          <div><span class="priority-dot p2">High</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/faq</div><div class="title">FAQ</div></div>
+          <div class="desc">Accordion with 20+ questions: thermal break, installation time, guarantee, price ranges. FAQPage structured data gets rich snippets in Google search results.</div>
+          <div><span class="tag gold">SSG</span></div>
+          <div><span class="priority-dot p2">High</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/privacy-policy</div><div class="title">Privacy Policy (GDPR)</div></div>
+          <div class="desc">Required for the contact form + analytics. Template-based. Link from footer.</div>
+          <div><span class="tag">SSG</span></div>
+          <div><span class="priority-dot p3">Standard</span></div>
+        </div>
+        <div class="page-row">
+          <div><div class="url">/studio</div><div class="title">Sanity Studio (CMS)</div></div>
+          <div class="desc">Embedded Sanity Studio. Accessible only to authenticated admin. Client can add projects, write blog posts, update contact info — no developer needed.</div>
+          <div><span class="tag">Server</span></div>
+          <div><span class="priority-dot p3">Internal</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 06 CMS SCHEMA ── -->
+    <section id="cms">
+      <div class="section-label">06 — CMS Schema</div>
+      <h2>Sanity Document Types</h2>
+      <p>These five document types in Sanity power the entire site. Design them correctly and the client can manage all content independently.</p>
+
+      <div class="code-title">// sanity/schemas/project.ts</div>
+      <pre><span class="keyword">export const</span> <span class="type">project</span> = {
+  name: <span class="str">'project'</span>,
+  title: <span class="str">'Έργο (Portfolio)'</span>,
+  type: <span class="str">'document'</span>,
+  fields: [
+    { name: <span class="str">'title'</span>,       type: <span class="str">'string'</span>,   title: <span class="str">'Τίτλος Έργου'</span>    },
+    { name: <span class="str">'slug'</span>,        type: <span class="str">'slug'</span>,     source: <span class="str">'title'</span>           },
+    { name: <span class="str">'category'</span>,    type: <span class="str">'string'</span>,   options: { list: [
+        <span class="str">'Συρόμενα'</span>, <span class="str">'Ανοιγόμενα'</span>, <span class="str">'Στέγαστρα'</span>, <span class="str">'Κιγκλιδώματα'</span>,
+        <span class="str">'Πόρτες Ασφαλείας'</span>, <span class="str">'Τζαμαρίες'</span>
+    ]}},
+    { name: <span class="str">'mainImage'</span>,   type: <span class="str">'image'</span>,    title: <span class="str">'Κύρια Φωτογραφία'</span>,
+      options: { hotspot: <span class="keyword">true</span> }},
+    { name: <span class="str">'gallery'</span>,     type: <span class="str">'array'</span>,
+      of: [{ type: <span class="str">'image'</span>, options: { hotspot: <span class="keyword">true</span> } }]},
+    { name: <span class="str">'beforeImage'</span>,  type: <span class="str">'image'</span>,    title: <span class="str">'Φωτογραφία Πριν'</span>   },
+    { name: <span class="str">'afterImage'</span>,   type: <span class="str">'image'</span>,    title: <span class="str">'Φωτογραφία Μετά'</span>   },
+    { name: <span class="str">'location'</span>,     type: <span class="str">'string'</span>,   title: <span class="str">'Τοποθεσία'</span>         },
+    { name: <span class="str">'system'</span>,       type: <span class="str">'string'</span>,   title: <span class="str">'Σύστημα Αλουμινίου'</span>},
+    { name: <span class="str">'date'</span>,         type: <span class="str">'date'</span>                                     },
+    { name: <span class="str">'summary'</span>,      type: <span class="str">'text'</span>,     rows: 3                             },
+    { name: <span class="str">'body'</span>,         type: <span class="str">'portableText'</span>                                 },
+    { name: <span class="str">'featured'</span>,     type: <span class="str">'boolean'</span>,  title: <span class="str">'Προβολή στην αρχική'</span>},
+  ]
+}</pre>
+
+      <div class="card-grid" style="margin-top:24px;">
+        <div class="card">
+          <h4>Service</h4>
+          <p>Title, slug, category, icon (emoji or SVG), short description, long body (portable text), gallery, FAQ items (array), SEO meta.</p>
+        </div>
+        <div class="card">
+          <h4>BlogPost</h4>
+          <p>Title, slug, author, publishedAt, mainImage, excerpt, body (portable text), relatedService reference, tags, SEO meta.</p>
+        </div>
+        <div class="card">
+          <h4>SiteSettings</h4>
+          <p>Singleton doc: company phone, address, email, Google Maps URL, business hours, social links, footer text. Client editable.</p>
+        </div>
+        <div class="card">
+          <h4>Partner</h4>
+          <p>Brand name (Alumil, Etem…), logo image, URL. Array of these displayed as trust logos on homepage and About page.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 07 AUTH & ROLES ── -->
+    <section id="auth">
+      <div class="section-label">07 — Auth & Roles</div>
+      <h2>Authentication Strategy</h2>
+
+      <div class="callout blue">
+        <strong>Phase 1 recommendation:</strong> Ship without user accounts. The primary goal is lead generation, not a membership portal. Auth adds 2–3 weeks of development time and complexity that diverts focus from the core deliverable. Plan Phase 2 auth architecture now — but don't build it yet.
+      </div>
+
+      <h3 style="margin-top:28px;">Phase 2 Role Architecture (Clerk)</h3>
+      <p>When the client is ready to open a B2B portal for contractors and architects, implement the following role model using Clerk + Sanity metadata:</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">👤</div>
+          <h3>Guest (Unauthenticated)</h3>
+          <p>Full access to all public pages: portfolio, services, blog, contact. Can submit appointment form. No login required.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏠</div>
+          <h3>Registered User</h3>
+          <p>Saves favourite projects. Downloads technical PDFs (brochures). Pre-filled contact forms. Access to member-exclusive offers.</p>
+          <div class="stack-row"><span class="tag green">Self-register</span></div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔧</div>
+          <h3>Professional / Partner</h3>
+          <p>Wholesale price lists. CAD drawings. Priority appointment booking. Direct project inquiry channel. <strong>Requires admin approval.</strong></p>
+          <div class="stack-row"><span class="tag warn">Admin approved</span></div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>Admin</h3>
+          <p>Full CMS access via Sanity Studio. Approves professional accounts. Views analytics dashboard. Manages email campaigns per role.</p>
+          <div class="stack-row"><span class="tag gold">Internal only</span></div>
+        </div>
+      </div>
+
+      <div class="code-title">// Middleware route protection (Phase 2) — middleware.ts</div>
+      <pre><span class="keyword">import</span> { clerkMiddleware, createRouteMatcher } <span class="keyword">from</span> <span class="str">'@clerk/nextjs/server'</span>
+
+<span class="keyword">const</span> isProtectedRoute = createRouteMatcher([
+  <span class="str">'/dashboard(.*)'</span>,
+  <span class="str">'/technical-drawings(.*)'</span>,
+  <span class="str">'/wholesale-prices(.*)'</span>,
+])
+
+<span class="keyword">export default</span> clerkMiddleware(<span class="keyword">async</span> (auth, req) => {
+  <span class="keyword">if</span> (isProtectedRoute(req)) {
+    <span class="keyword">await</span> auth.protect() <span class="comment">// Redirects to sign-in if unauthenticated</span>
+  }
+})</pre>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 08 SEO ── -->
+    <section id="seo">
+      <div class="section-label">08 — SEO Strategy</div>
+      <h2>Search Engine Optimisation</h2>
+      <p>For a local aluminium business, SEO is the primary long-term traffic channel. The architecture is designed to maximise local search visibility from day one.</p>
+
+      <div class="seo-grid">
+        <div class="seo-item"><span class="metric">&lt;1s</span><span class="label">Target LCP (Largest Contentful Paint)</span></div>
+        <div class="seo-item"><span class="metric">100</span><span class="label">Target Lighthouse Performance Score</span></div>
+        <div class="seo-item"><span class="metric">AVIF</span><span class="label">Image format (60% smaller than JPEG)</span></div>
+        <div class="seo-item"><span class="metric">3</span><span class="label">Structured data schemas implemented</span></div>
+      </div>
+
+      <div class="card-grid card-grid-2" style="margin-top:28px;">
+        <div class="card">
+          <h4>Local SEO (Most Important)</h4>
+          <p><strong>Google Business Profile</strong> must be claimed and linked. Each service page targets keywords like <em>"κουφώματα αλουμινίου + [πόλη]"</em>. Schema: <code style="font-family: 'Space Mono', monospace; font-size: .78rem; color: var(--accent2)">LocalBusiness</code> with address, phone, hours.</p>
+        </div>
+        <div class="card">
+          <h4>Structured Data</h4>
+          <p><strong>LocalBusiness</strong> on every page. <strong>FAQPage</strong> on /faq and service pages (rich snippets). <strong>BreadcrumbList</strong> on all inner pages. Implemented via Next.js JSON-LD component.</p>
+        </div>
+        <div class="card">
+          <h4>Image SEO</h4>
+          <p>Every project image gets descriptive alt text from Sanity: <em>"Συρόμενα αλουμινίου Alumil στη Γλυφάδα"</em>. Google Images is a significant traffic source for renovation products.</p>
+        </div>
+        <div class="card">
+          <h4>Content Strategy</h4>
+          <p>10 blog articles targeting long-tail keywords: "τι είναι θερμοδιακοπή", "αλλαγή κουφωμάτων κόστος", "πόσο αντέχει αλουμίνιο". These pages attract high-intent visitors ready to buy.</p>
+        </div>
+      </div>
+
+      <div class="code-title">// app/layout.tsx — Global metadata config</div>
+      <pre><span class="keyword">export const</span> <span class="type">metadata</span>: <span class="type">Metadata</span> = {
+  metadataBase: <span class="keyword">new</span> URL(<span class="str">'https://yourdomain.gr'</span>),
+  title: {
+    default: <span class="str">'Κουφώματα Αλουμινίου [Πόλη] | [Εταιρεία]'</span>,
+    template: <span class="str">'%s | [Εταιρεία] — Κουφώματα'</span>,
+  },
+  description: <span class="str">'Κατασκευή και τοποθέτηση κουφωμάτων αλουμινίου, τζαμαριών, στεγάστρων και πορτών ασφαλείας. Δωρεάν επιμέτρηση.'</span>,
+  openGraph: { type: <span class="str">'website'</span>, locale: <span class="str">'el_GR'</span> },
+  robots: { index: <span class="keyword">true</span>, follow: <span class="keyword">true</span> },
+  alternates: { canonical: <span class="str">'https://yourdomain.gr'</span> },
+}</pre>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 09 PERFORMANCE ── -->
+    <section id="performance">
+      <div class="section-label">09 — Performance</div>
+      <h2>Performance Optimisation</h2>
+      <p>Performance is not optional — it directly impacts Google ranking and user conversion rates. A 1-second delay in page load reduces conversions by ~7%.</p>
+
+      <div class="checklist">
+        <div class="checklist-item">
+          <div class="check-icon done">✓</div>
+          <div><strong>next/image for every image.</strong> Automatic WebP/AVIF conversion, responsive srcset, blur placeholder from Sanity's LQIP (Low Quality Image Placeholder) metadata. Never use a raw &lt;img&gt; tag.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon done">✓</div>
+          <div><strong>Static Generation (SSG) for all public pages.</strong> Zero server processing time per request. Pages served as pre-built HTML from Vercel's edge CDN.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon done">✓</div>
+          <div><strong>Font subsetting.</strong> Use <code style="font-family: 'Space Mono', monospace; font-size:.82rem; color:var(--accent2)">next/font/google</code> — it downloads only Greek character subset, removes render-blocking, and self-hosts the font file at build time.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon done">✓</div>
+          <div><strong>Lazy-load below-the-fold content.</strong> Portfolio gallery images load only when scrolled into view. Use <code style="font-family:'Space Mono',monospace;font-size:.82rem;color:var(--accent2)">loading="lazy"</code> on gallery components.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon done">✓</div>
+          <div><strong>ISR (Incremental Static Regeneration).</strong> Portfolio and blog pages revalidate every 60 seconds after a Sanity publish webhook fires. No rebuild needed for the whole site.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon info">!</div>
+          <div><strong>Third-party scripts.</strong> Load Google Maps embed with <code style="font-family:'Space Mono',monospace;font-size:.82rem;color:var(--accent2)">loading="lazy"</code> via iframe facade. Delay Plausible analytics script until after first user interaction.</div>
+        </div>
+        <div class="checklist-item">
+          <div class="check-icon info">!</div>
+          <div><strong>Contact form.</strong> Use a Server Action (Next.js 14) instead of a client-side fetch — no extra JavaScript bundle shipped to the browser for form handling.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 10 DESIGN SYSTEM ── -->
+    <section id="design">
+      <div class="section-label">10 — Design System</div>
+      <h2>Design System Tokens</h2>
+      <p>Agree on these tokens before building any component. Store in <code style="font-family:'Space Mono',monospace;font-size:.85rem;color:var(--accent2)">app/globals.css</code>. Both developers use only these values — no magic numbers in components.</p>
+
+      <div class="code-title">// app/globals.css — Design Tokens</div>
+      <pre><span class="keyword">@layer</span> base {
+  :root {
+    <span class="comment">/* ─ COLORS ─ */</span>
+    --color-primary:    <span class="str">#[brand]</span>;       <span class="comment">/* From client's logo/brand guide */</span>
+    --color-accent:     <span class="str">#[accent]</span>;
+    --color-surface:    <span class="str">#ffffff</span>;
+    --color-on-surface: <span class="str">#111827</span>;
+    --color-muted:      <span class="str">#6b7280</span>;
+    --color-border:     <span class="str">#e5e7eb</span>;
+
+    <span class="comment">/* ─ TYPOGRAPHY ─ */</span>
+    --font-display: <span class="str">'[Display Font]'</span>, sans-serif; <span class="comment">/* e.g. Syne, Playfair */</span>
+    --font-body:    <span class="str">'[Body Font]'</span>, sans-serif;    <span class="comment">/* e.g. DM Sans */</span>
+    --font-mono:    <span class="str">'Space Mono'</span>, monospace;
+
+    <span class="comment">/* ─ SPACING SCALE ─ */</span>
+    --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+    --space-4: 16px; --space-5: 24px; --space-6: 32px;
+    --space-7: 48px; --space-8: 64px; --space-9: 96px;
+
+    <span class="comment">/* ─ RADII ─ */</span>
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-full: 9999px;
+
+    <span class="comment">/* ─ SHADOWS ─ */</span>
+    --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    --shadow-elevated: 0 8px 32px rgba(0,0,0,.10);
+  }
+}</pre>
+
+      <h3 style="margin-top:28px;">Component Preview — Hero CTA Button</h3>
+      <div class="component-preview">
+        <div class="component-preview-bar">
+          <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green-win"></div>
+          <span>CTA Button Variants</span>
+        </div>
+        <div style="padding:32px; display:flex; gap:16px; flex-wrap:wrap; align-items:center; background:#f9fafb;">
+          <button style="padding:14px 28px; background:#1a1a2e; color:#fff; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:15px; cursor:pointer; letter-spacing:-.01em;">Κλείστε Ραντεβού →</button>
+          <button style="padding:13px 27px; background:transparent; color:#1a1a2e; border:2px solid #1a1a2e; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:600; font-size:15px; cursor:pointer;">Δείτε τα Έργα μας</button>
+          <a href="#" style="display:flex;align-items:center;gap:8px;color:#1a1a2e;font-family:'DM Sans',sans-serif;font-weight:600;font-size:15px;text-decoration:none;">📞 &nbsp;210 000 0000</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 11 SPRINT PLAN ── -->
+    <section id="sprint">
+      <div class="section-label">11 — Sprint Plan</div>
+      <h2>6-Week Development Plan</h2>
+      <p>Two junior developers working in parallel. Each sprint is one week. Developer A owns infrastructure + backend; Developer B owns components + UI.</p>
+
+      <table class="milestone-table">
+        <thead>
+          <tr>
+            <th>Sprint</th>
+            <th>Developer A (Infra / Data)</th>
+            <th>Developer B (UI / Components)</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="phase-name">1 — Setup</td>
+            <td>Next.js 14 init, Tailwind config, Vercel deploy pipeline, Sanity project + schemas (project, service, settings), environment variables.</td>
+            <td>Design token setup, Header + Footer components, Mobile navigation, Google Font integration, Figma/design handoff review.</td>
+            <td class="days">5 days</td>
+          </tr>
+          <tr>
+            <td class="phase-name">2 — Homepage</td>
+            <td>GROQ queries for featured projects + services, Sanity webhook → ISR revalidation, Resend email setup for contact form.</td>
+            <td>Hero section (fullscreen image + headline + CTA), Services preview grid, Featured projects strip, Partner logos row, Trust indicators.</td>
+            <td class="days">5 days</td>
+          </tr>
+          <tr>
+            <td class="phase-name">3 — Portfolio + Services</td>
+            <td>Dynamic routes for [slug] pages, generateStaticParams for all projects + services, image optimisation pipeline, sitemap.xml generation.</td>
+            <td>Portfolio gallery with category filters, Project detail page (gallery, before/after slider), Service detail pages, FAQ accordion component.</td>
+            <td class="days">5 days</td>
+          </tr>
+          <tr>
+            <td class="phase-name">4 — Contact + About</td>
+            <td>Server Action for contact form (validation + Resend email), Google Maps iframe integration, robots.txt and sitemap.xml.</td>
+            <td>Contact page (two-step appointment form), About page (team, certifications, story), GDPR privacy policy page, 404 error page.</td>
+            <td class="days">5 days</td>
+          </tr>
+          <tr>
+            <td class="phase-name">5 — Blog + SEO</td>
+            <td>Blog GROQ queries, portable text renderer component, JSON-LD structured data (LocalBusiness, FAQPage, Article), Open Graph images.</td>
+            <td>Blog index page, Blog article layout, Related articles component, Social share buttons, Breadcrumb navigation, Reading progress bar.</td>
+            <td class="days">5 days</td>
+          </tr>
+          <tr>
+            <td class="phase-name">6 — QA + Launch</td>
+            <td>Lighthouse audits (target ≥95 all categories), broken link check, Sanity CMS training for client, production environment variables, DNS cutover.</td>
+            <td>Cross-browser testing (Chrome, Firefox, Safari, Mobile), Accessibility audit (WCAG 2.1 AA), animation polish, final content review with client.</td>
+            <td class="days">5 days</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── 12 LAUNCH CHECKLIST ── -->
+    <section id="checklist">
+      <div class="section-label">12 — Pre-Launch</div>
+      <h2>Launch Checklist</h2>
+
+      <div class="card-grid card-grid-2">
+        <div class="card">
+          <h4>Technical</h4>
+          <div class="checklist">
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Lighthouse score ≥ 95 on all 4 categories</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>All images using next/image with alt text</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>HTTPS (auto via Vercel)</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>sitemap.xml + robots.txt present</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Contact form sends email successfully</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>ISR webhook configured in Sanity</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Environment variables in Vercel (not .env)</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4>SEO & Legal</h4>
+          <div class="checklist">
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Google Business Profile claimed + linked</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Google Search Console site submitted</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>JSON-LD LocalBusiness schema on homepage</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>Privacy Policy + GDPR notice on forms</div></div>
+            <div class="checklist-item"><div class="check-icon warn">!</div><div>All text content reviewed by client</div></div>
+            <div class="checklist-item"><div class="check-icon warn">!</div><div>30+ hi-res project photos uploaded to Sanity</div></div>
+            <div class="checklist-item"><div class="check-icon warn">!</div><div>Phone number tested on mobile (click-to-call)</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Content</h4>
+          <div class="checklist">
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>5+ services with descriptions created in Sanity</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>10+ portfolio projects with photos</div></div>
+            <div class="checklist-item"><div class="check-icon done">✓</div><div>FAQ page with 15+ questions</div></div>
+            <div class="checklist-item"><div class="check-icon warn">!</div><div>3+ blog articles (minimum for SEO traction)</div></div>
+            <div class="checklist-item"><div class="check-icon warn">!</div><div>Partner logos (Alumil, Etem etc.) provided</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Client Handoff</h4>
+          <div class="checklist">
+            <div class="checklist-item"><div class="check-icon info">!</div><div>Sanity CMS training session (1hr) completed</div></div>
+            <div class="checklist-item"><div class="check-icon info">!</div><div>Admin user created for client in Sanity</div></div>
+            <div class="checklist-item"><div class="check-icon info">!</div><div>Written guide: "How to add a new project"</div></div>
+            <div class="checklist-item"><div class="check-icon info">!</div><div>Plausible dashboard access given to client</div></div>
+            <div class="checklist-item"><div class="check-icon info">!</div><div>Domain + DNS records documented</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <strong>Aluminum Site Architecture Blueprint</strong><br>
+    <span style="color:var(--muted)">v1.0 — Generated February 2026 — For internal developer use only</span>
+  </div>
+  <div style="text-align:right; color:var(--muted)">
+    Next.js 14 · Sanity.io · Vercel · Tailwind CSS v4<br>
+    <span style="font-family:'Space Mono',monospace; font-size:10px; color:var(--border)">aluminum-site-architecture.html</span>
+  </div>
+</footer>
+
+<script>
+  // Active nav link highlight on scroll
+  const sections = document.querySelectorAll('section[id]')
+  const links = document.querySelectorAll('.nav a')
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'))
+        const active = document.querySelector(`.nav a[href="#${entry.target.id}"]`)
+        if (active) active.classList.add('active')
+      }
+    })
+  }, { rootMargin: '-30% 0px -60% 0px' })
+
+  sections.forEach(s => observer.observe(s))
+</script>
+</body>
+</html>

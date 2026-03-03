@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Πρόταση Ιστοσελίδας — Κουφώματα Αλουμινίου</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════
+   RESET & TOKENS
+═══════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+:root {
+  --ink:        #0e1117;
+  --ink-light:  #3b4352;
+  --mist:       #6e7789;
+  --rule:       #dde1e9;
+  --sheet:      #f8f7f4;
+  --white:      #ffffff;
+  --gold:       #b08d57;
+  --gold-light: #e8d9be;
+  --gold-pale:  #f7f2ea;
+  --steel:      #1c2b3a;
+  --steel-mid:  #2e4057;
+  --accent:     #c0392b;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-caps:    'Bebas Neue', sans-serif;
+
+  --max: 1120px;
+  --r: 10px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--sheet);
+  color: var(--ink);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════ */
+.display {
+  font-family: var(--font-caps);
+  letter-spacing: .05em;
+  line-height: 1;
+}
+.serif { font-family: var(--font-display); }
+
+.label {
+  font-size: .68rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--mist);
+  font-weight: 500;
+}
+
+.gold-text { color: var(--gold); }
+.steel-text { color: var(--steel); }
+
+/* ═══════════════════════════════════
+   LAYOUT UTILITIES
+═══════════════════════════════════ */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 40px; }
+.wrap-narrow { max-width: 780px; margin: 0 auto; padding: 0 40px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+section { padding: 100px 0; }
+
+hr.rule {
+  border: none; border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════
+   COVER PAGE
+═══════════════════════════════════ */
+.cover {
+  min-height: 100vh;
+  background: var(--steel);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Geometric background pattern */
+.cover::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(176,141,87,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(176,141,87,.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Diagonal accent slab */
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 30%, rgba(176,141,87,.06) 100%);
+  clip-path: polygon(40% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.cover-inner {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 80px;
+  min-height: calc(100vh - 80px);
+}
+
+.cover-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(176,141,87,.15);
+  border: 1px solid rgba(176,141,87,.3);
+  border-radius: 100px;
+  padding: 8px 18px;
+  margin-bottom: 48px;
+  width: fit-content;
+}
+.cover-badge span {
+  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold);
+}
+.cover-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+}
+
+.cover-title {
+  font-family: var(--font-caps);
+  font-size: clamp(3.5rem, 8vw, 7.5rem);
+  letter-spacing: .04em;
+  line-height: .95;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.cover-title .accent-line {
+  color: var(--gold);
+  display: block;
+}
+
+.cover-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  color: rgba(255,255,255,.55);
+  font-style: italic;
+  margin-top: 20px;
+  margin-bottom: 56px;
+}
+
+.cover-meta {
+  display: flex; gap: 48px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 32px;
+}
+.cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+.cover-meta-item .meta-label {
+  font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+}
+.cover-meta-item .meta-val {
+  font-size: .88rem; color: rgba(255,255,255,.8);
+}
+
+.cover-footer {
+  position: relative; z-index: 2;
+  padding: 24px 80px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.cover-footer span {
+  font-size: .75rem; color: rgba(255,255,255,.25); letter-spacing: .1em;
+}
+
+/* ═══════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════ */
+.section-header {
+  margin-bottom: 60px;
+}
+.section-header .label { margin-bottom: 14px; }
+.section-header h2 {
+  font-family: var(--font-caps);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.section-header p {
+  font-size: 1rem; color: var(--ink-light);
+  max-width: 560px; font-weight: 300;
+}
+
+/* ═══════════════════════════════════
+   INTRO / MISSION
+═══════════════════════════════════ */
+.intro { background: var(--white); }
+
+.intro-split {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.intro-number {
+  font-family: var(--font-caps);
+  font-size: 11rem;
+  line-height: 1;
+  color: var(--gold-light);
+  margin-bottom: -20px;
+  display: block;
+}
+
+.intro-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 20px;
+}
+
+.intro-body { color: var(--ink-light); font-size: .95rem; font-weight: 300; }
+.intro-body strong { color: var(--ink); font-weight: 500; }
+
+.kpi-strip {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); border-radius: var(--r);
+  overflow: hidden; margin-top: 40px;
+}
+.kpi {
+  background: var(--white); padding: 24px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.kpi-num {
+  font-family: var(--font-caps);
+  font-size: 2.2rem; letter-spacing: .03em;
+  color: var(--steel);
+}
+.kpi-label { font-size: .78rem; color: var(--mist); }
+
+.intro-visual {
+  position: relative;
+}
+
+/* Browser mockup */
+.browser-mockup {
+  background: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,.2);
+}
+.browser-bar {
+  background: #2a2a2a;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dots span {
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.bd-r { background: #ff5f57; }
+.bd-y { background: #febc2e; }
+.bd-g { background: #28c840; }
+.browser-url {
+  flex: 1; background: #3a3a3a; border-radius: 6px;
+  padding: 5px 12px; font-size: .72rem; color: #888;
+  font-family: monospace; letter-spacing: .03em;
+  white-space: nowrap; overflow: hidden;
+}
+.browser-screen {
+  padding: 0;
+  background: var(--sheet);
+}
+
+/* Mini website inside browser */
+.mini-site { font-size: .6rem; }
+.mini-nav {
+  background: var(--white);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+}
+.mini-logo {
+  font-family: var(--font-caps);
+  font-size: 1rem; letter-spacing: .1em; color: var(--steel);
+}
+.mini-nav-links {
+  display: flex; gap: 12px;
+}
+.mini-nav-links span {
+  font-size: .6rem; color: var(--mist);
+}
+.mini-hero {
+  background: linear-gradient(135deg, var(--steel) 0%, var(--steel-mid) 100%);
+  padding: 28px 16px;
+  position: relative; overflow: hidden;
+}
+.mini-hero::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 40%; height: 100%;
+  background: rgba(176,141,87,.1);
+  clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.mini-hero-label {
+  font-size: .5rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.mini-hero-title {
+  font-family: var(--font-caps);
+  font-size: 1.6rem; letter-spacing: .05em; line-height: 1;
+  color: var(--white); margin-bottom: 10px;
+}
+.mini-hero-sub {
+  font-size: .58rem; color: rgba(255,255,255,.55);
+  max-width: 200px; margin-bottom: 14px;
+}
+.mini-cta {
+  display: inline-block;
+  background: var(--gold); color: var(--white);
+  padding: 6px 14px; border-radius: 4px;
+  font-size: .62rem; font-weight: 600;
+}
+.mini-services {
+  padding: 12px 16px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  background: var(--white);
+}
+.mini-service-card {
+  background: var(--sheet); border-radius: 4px;
+  padding: 8px; text-align: center;
+}
+.mini-service-icon { font-size: 1rem; margin-bottom: 3px; }
+.mini-service-name { font-size: .5rem; color: var(--mist); }
+.mini-projects {
+  padding: 12px 16px;
+  background: var(--sheet);
+}
+.mini-projects-label {
+  font-size: .5rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--mist); margin-bottom: 8px;
+}
+.mini-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+}
+.mini-project {
+  aspect-ratio: 4/3; border-radius: 3px;
+  background: linear-gradient(135deg, #c9d6e3, #a8b9cc);
+  display: flex; align-items: flex-end; overflow: hidden;
+}
+.mini-project:nth-child(1) { background: linear-gradient(135deg,#8fa3b1,#667d8a); }
+.mini-project:nth-child(2) { background: linear-gradient(135deg,#a8bccc,#7a95a8); }
+.mini-project:nth-child(3) { background: linear-gradient(135deg,#b4c5d3,#8da3b0); }
+.mini-project-label {
+  background: rgba(0,0,0,.5); width: 100%;
+  padding: 2px 4px; font-size: .4rem; color: rgba(255,255,255,.8);
+}
+
+/* ═══════════════════════════════════
+   PAGES / STRUCTURE
+═══════════════════════════════════ */
+.pages-section { background: var(--gold-pale); }
+
+.pages-map {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.page-card {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 28px;
+  border: 1px solid var(--rule);
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.page-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold-light);
+  transition: background .25s;
+}
+.page-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.08); }
+.page-card:hover::before { background: var(--gold); }
+
+.page-card.featured::before { background: var(--steel); }
+.page-card.featured { border-color: var(--steel-mid); }
+
+.page-icon {
+  font-size: 1.6rem; margin-bottom: 12px; display: block;
+}
+.page-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem; font-weight: 600;
+  margin-bottom: 6px;
+}
+.page-card .url-tag {
+  font-family: monospace; font-size: .72rem;
+  color: var(--gold); background: var(--gold-pale);
+  padding: 2px 8px; border-radius: 4px;
+  display: inline-block; margin-bottom: 10px;
+}
+.page-card p {
+  font-size: .83rem; color: var(--ink-light); line-height: 1.6;
+}
+.page-card .priority {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 12px; font-size: .7rem; color: var(--mist);
+}
+.page-card .priority::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--rule);
+}
+.page-card.featured .priority::before { background: var(--steel); }
+.page-card .priority.high::before { background: var(--gold); }
+
+/* ═══════════════════════════════════
+   FUNCTIONALITIES
+═══════════════════════════════════ */
+.functions-section { background: var(--white); }
+
+.function-block {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 64px; align-items: start;
+  margin-bottom: 80px;
+  padding-bottom: 80px;
+  border-bottom: 1px solid var(--rule);
+}
+.function-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.function-block.reverse { direction: rtl; }
+.function-block.reverse > * { direction: ltr; }
+
+.function-number {
+  font-family: var(--font-caps);
+  font-size: 5rem; letter-spacing: .05em;
+  color: var(--gold-light); line-height: 1;
+  display: block; margin-bottom: 4px;
+}
+.function-heading {
+  font-family: var(--font-display);
+  font-size: 1.9rem; font-weight: 600;
+  line-height: 1.25; margin-bottom: 12px;
+}
+.function-desc {
+  color: var(--ink-light); font-size: .92rem;
+  font-weight: 300; margin-bottom: 20px;
+}
+
+.feature-list {
+  list-style: none; display: flex; flex-direction: column; gap: 10px;
+}
+.feature-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: .88rem; color: var(--ink-light);
+}
+.feature-list li::before {
+  content: '✓';
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  background: var(--gold-pale);
+  color: var(--gold);
+  border-radius: 50%;
+  font-size: .65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+
+/* UI MOCK PANELS */
+.ui-panel {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.07);
+}
+.ui-panel-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ui-panel-title { font-size: .75rem; color: var(--mist); font-weight: 500; }
+.ui-panel-body { padding: 16px; }
+
+/* Portfolio filter mock */
+.filter-tabs {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+}
+.filter-tab {
+  padding: 5px 12px; border-radius: 100px; font-size: .68rem;
+  border: 1px solid var(--rule); color: var(--mist);
+  background: var(--white); cursor: pointer;
+}
+.filter-tab.active {
+  background: var(--steel); color: var(--white); border-color: var(--steel);
+}
+.portfolio-mini-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.p-thumb {
+  aspect-ratio: 1; border-radius: 5px; overflow: hidden;
+  position: relative;
+}
+.p-thumb-bg {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #c5d0da, #99aebb);
+}
+.p-thumb:nth-child(1) .p-thumb-bg { background: linear-gradient(135deg,#8fa3b1,#667d8a); }
+.p-thumb:nth-child(2) .p-thumb-bg { background: linear-gradient(135deg,#a0b4c2,#7c97a6); }
+.p-thumb:nth-child(3) .p-thumb-bg { background: linear-gradient(135deg,#b0c1cd,#8aa0ae); }
+.p-thumb:nth-child(4) .p-thumb-bg { background: linear-gradient(135deg,#c0ced8,#98adb9); }
+.p-thumb:nth-child(5) .p-thumb-bg { background: linear-gradient(135deg,#9fb2be,#7695a4); }
+.p-thumb:nth-child(6) .p-thumb-bg { background: linear-gradient(135deg,#aac0cc,#80a0af); }
+.p-thumb-overlay {
+  position: absolute; inset: 0;
+  background: rgba(28,43,58,.6);
+  opacity: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .2s;
+}
+.p-thumb:hover .p-thumb-overlay { opacity: 1; }
+.p-thumb-overlay span { font-size: .5rem; color: white; }
+
+/* Contact form mock */
+.form-mock { display: flex; flex-direction: column; gap: 10px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-field {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.form-field label {
+  font-size: .65rem; text-transform: uppercase; letter-spacing: .1em; color: var(--mist);
+}
+.form-field-input {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 5px; padding: 8px 10px;
+  font-size: .72rem; color: var(--ink);
+}
+.form-field-input.filled { border-color: var(--gold); }
+.form-submit {
+  background: var(--steel); color: var(--white);
+  padding: 10px; border-radius: 5px;
+  font-size: .75rem; font-weight: 600; text-align: center;
+  margin-top: 4px;
+}
+
+/* Blog mock */
+.blog-preview-list { display: flex; flex-direction: column; gap: 10px; }
+.blog-preview-item {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 12px;
+  display: flex; gap: 10px;
+}
+.blog-preview-thumb {
+  width: 50px; height: 50px; flex-shrink: 0;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #c0ced8, #99b0bc);
+}
+.blog-preview-content { display: flex; flex-direction: column; gap: 3px; }
+.blog-preview-tag {
+  font-size: .55rem; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--gold);
+}
+.blog-preview-title {
+  font-size: .72rem; color: var(--ink); font-weight: 500; line-height: 1.3;
+}
+.blog-preview-meta { font-size: .6rem; color: var(--mist); }
+
+/* ═══════════════════════════════════
+   DESIGN SECTION
+═══════════════════════════════════ */
+.design-section { background: var(--ink); color: var(--white); overflow: hidden; }
+.design-section .section-header h2 { color: var(--white); }
+.design-section .section-header p { color: rgba(255,255,255,.5); }
+.design-section .section-header .label { color: var(--gold); }
+
+.palette-showcase {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 16px; margin-top: 32px;
+}
+.palette-swatch {
+  border-radius: 10px; padding: 20px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: 140px;
+}
+.palette-swatch .swatch-name { font-size: .7rem; color: rgba(255,255,255,.6); margin-bottom: 2px; }
+.palette-swatch .swatch-hex { font-family: monospace; font-size: .8rem; color: rgba(255,255,255,.9); }
+.sw-steel { background: var(--steel); border: 1px solid rgba(255,255,255,.08); }
+.sw-gold  { background: var(--gold); }
+.sw-light { background: #e8e2d5; }
+.sw-light .swatch-name, .sw-light .swatch-hex { color: var(--ink-light); }
+.sw-sheet { background: var(--sheet); border: 1px solid rgba(255,255,255,.05); }
+.sw-sheet .swatch-name, .sw-sheet .swatch-hex { color: var(--ink-light); }
+
+.typography-showcase {
+  margin-top: 60px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+.type-sample { padding: 28px; background: rgba(255,255,255,.04); border-radius: var(--r); }
+.type-sample .type-label { font-size: .65rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px; }
+.type-sample .type-specimen-display { font-family: var(--font-caps); font-size: 2.8rem; letter-spacing: .06em; color: var(--white); line-height: 1; }
+.type-sample .type-specimen-serif { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; color: rgba(255,255,255,.8); }
+.type-sample .type-specimen-body { font-family: var(--font-body); font-size: .9rem; color: rgba(255,255,255,.5); font-weight: 300; line-height: 1.7; }
+
+.design-layouts {
+  margin-top: 60px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.layout-card {
+  border-radius: var(--r); overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.layout-preview {
+  background: var(--sheet); padding: 14px; min-height: 180px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.layout-meta { padding: 12px 14px; background: rgba(255,255,255,.05); }
+.layout-meta h4 { font-size: .82rem; color: rgba(255,255,255,.85); margin-bottom: 2px; }
+.layout-meta p { font-size: .72rem; color: rgba(255,255,255,.4); }
+
+/* Layout wireframe elements */
+.wf-bar { background: var(--steel); height: 28px; border-radius: 3px; }
+.wf-hero { background: linear-gradient(135deg, var(--steel), var(--steel-mid)); border-radius: 5px; flex: 1; display: flex; align-items: flex-end; padding: 10px; }
+.wf-hero-text { display: flex; flex-direction: column; gap: 3px; }
+.wf-h { background: rgba(255,255,255,.9); height: 10px; border-radius: 2px; }
+.wf-p { background: rgba(255,255,255,.4); height: 6px; border-radius: 2px; }
+.wf-btn { background: var(--gold); height: 18px; width: 70px; border-radius: 3px; }
+
+.wf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; flex: 1; }
+.wf-card-mock { background: var(--white); border-radius: 4px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.wf-img-mock { background: linear-gradient(135deg,#c5d0da,#99aebb); border-radius: 3px; height: 40px; }
+.wf-text-sm { background: var(--rule); height: 5px; border-radius: 2px; }
+.wf-text-sm-w { background: var(--rule); height: 5px; border-radius: 2px; width: 60%; }
+
+.wf-masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; flex: 1; }
+.wf-tall { background: linear-gradient(135deg,#8fa3b1,#667d8a); border-radius: 3px; grid-row: span 2; }
+.wf-short { background: linear-gradient(135deg,#a8bccc,#7a95a8); border-radius: 3px; }
+.wf-short2 { background: linear-gradient(135deg,#b0c1cd,#8aa0ae); border-radius: 3px; }
+
+/* ═══════════════════════════════════
+   SEO SECTION
+═══════════════════════════════════ */
+.seo-section { background: var(--gold-pale); }
+
+.seo-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+.seo-pillar {
+  background: var(--white); border-radius: var(--r);
+  padding: 24px; border: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.seo-pillar-icon { font-size: 1.8rem; }
+.seo-pillar h4 { font-size: .9rem; font-weight: 600; }
+.seo-pillar p { font-size: .8rem; color: var(--ink-light); font-weight: 300; }
+
+.google-preview {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  padding: 24px 28px;
+  margin-top: 40px;
+  max-width: 640px;
+}
+.google-preview .gp-label {
+  font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--mist); margin-bottom: 16px;
+}
+.google-preview .gp-url { font-size: .82rem; color: #1a0dab; margin-bottom: 3px; }
+.google-preview .gp-title {
+  font-size: 1.15rem; color: #1a0dab; font-weight: 400;
+  text-decoration: underline; margin-bottom: 5px;
+}
+.google-preview .gp-desc { font-size: .85rem; color: #545454; line-height: 1.5; }
+.google-preview .gp-sitelinks {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+}
+.google-preview .sitelink {
+  font-size: .78rem; color: #1a0dab; text-decoration: underline;
+}
+
+/* ═══════════════════════════════════
+   TIMELINE
+═══════════════════════════════════ */
+.timeline-section { background: var(--white); }
+
+.timeline {
+  position: relative;
+  margin-top: 48px;
+}
+.timeline::before {
+  content: '';
+  position: absolute; left: 140px; top: 0; bottom: 0;
+  width: 1px; background: var(--rule);
+}
+
+.timeline-item {
+  display: grid; grid-template-columns: 140px 1fr;
+  gap: 32px; margin-bottom: 40px;
+  position: relative;
+}
+.timeline-week {
+  text-align: right; padding-top: 4px;
+}
+.timeline-week .week-label {
+  font-size: .68rem; letter-spacing: .15em; text-transform: uppercase; color: var(--mist);
+}
+.timeline-week .week-name {
+  font-family: var(--font-caps);
+  font-size: 1.5rem; letter-spacing: .05em; color: var(--gold);
+}
+
+.timeline-dot {
+  position: absolute; left: 132px; top: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--gold);
+  z-index: 2;
+}
+.timeline-dot.done { background: var(--gold); }
+
+.timeline-content {
+  background: var(--sheet); border: 1px solid var(--rule);
+  border-radius: var(--r); padding: 20px 24px;
+}
+.timeline-content h4 {
+  font-size: .95rem; font-weight: 600; margin-bottom: 6px;
+}
+.timeline-content p { font-size: .83rem; color: var(--ink-light); }
+.timeline-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.timeline-tag {
+  font-size: .65rem; padding: 3px 10px; border-radius: 100px;
+  background: var(--white); border: 1px solid var(--rule); color: var(--mist);
+}
+.timeline-tag.gold { background: var(--gold-pale); border-color: var(--gold-light); color: var(--gold); }
+
+/* ═══════════════════════════════════
+   INVESTMENT / PRICING
+═══════════════════════════════════ */
+.investment-section { background: var(--steel); color: var(--white); }
+.investment-section .section-header h2 { color: var(--white); }
+.investment-section .section-header p { color: rgba(255,255,255,.5); }
+.investment-section .section-header .label { color: var(--gold); }
+
+.investment-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px;
+}
+.investment-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  padding: 28px;
+  transition: all .25s;
+}
+.investment-card:hover { background: rgba(255,255,255,.09); }
+.investment-card.featured {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.investment-card.featured h3,
+.investment-card.featured .inv-desc,
+.investment-card.featured .inv-item { color: rgba(255,255,255,.9); }
+.investment-card.featured .inv-phase { color: rgba(255,255,255,.65); }
+
+.inv-phase { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 10px; }
+.investment-card h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+.inv-desc { font-size: .83rem; color: rgba(255,255,255,.5); font-weight: 300; margin-bottom: 16px; }
+.inv-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.inv-item {
+  font-size: .82rem; color: rgba(255,255,255,.7);
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.inv-item::before { content: '→'; color: var(--gold); flex-shrink: 0; }
+.investment-card.featured .inv-item::before { color: rgba(255,255,255,.6); }
+
+.investment-note {
+  margin-top: 40px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r); padding: 24px 28px;
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.investment-note-icon { font-size: 1.4rem; flex-shrink: 0; }
+.investment-note p { font-size: .85rem; color: rgba(255,255,255,.55); font-weight: 300; }
+.investment-note strong { color: var(--gold); font-weight: 500; }
+
+/* ═══════════════════════════════════
+   CTA / CLOSING
+═══════════════════════════════════ */
+.cta-section {
+  background: var(--sheet);
+  text-align: center;
+  padding: 120px 40px;
+}
+.cta-section h2 {
+  font-family: var(--font-caps);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  letter-spacing: .05em;
+  margin-bottom: 16px;
+}
+.cta-section p {
+  color: var(--ink-light); max-width: 480px;
+  margin: 0 auto 40px; font-weight: 300;
+}
+.cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--steel); color: var(--white);
+  padding: 16px 36px; border-radius: 8px;
+  font-size: .9rem; font-weight: 600; text-decoration: none;
+  transition: background .2s;
+}
+.btn-primary:hover { background: var(--steel-mid); }
+.btn-secondary {
+  background: transparent; color: var(--steel);
+  padding: 15px 35px; border-radius: 8px;
+  font-size: .9rem; font-weight: 600; text-decoration: none;
+  border: 2px solid var(--rule);
+  transition: border-color .2s;
+}
+.btn-secondary:hover { border-color: var(--steel); }
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+footer {
+  background: var(--ink);
+  padding: 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+footer span { font-size: .78rem; color: rgba(255,255,255,.25); }
+footer .footer-logo {
+  font-family: var(--font-caps);
+  font-size: 1.1rem; letter-spacing: .1em;
+  color: rgba(255,255,255,.4);
+}
+
+/* ═══════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate { animation: fadeUp .7s ease both; }
+.delay-1 { animation-delay: .1s; }
+.delay-2 { animation-delay: .2s; }
+.delay-3 { animation-delay: .3s; }
+.delay-4 { animation-delay: .4s; }
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width: 900px) {
+  .wrap, .wrap-narrow { padding: 0 20px; }
+  section { padding: 60px 0; }
+  .cover-inner { padding: 40px 20px; }
+  .cover-footer { padding: 20px; }
+  .cover-title { font-size: 3rem; }
+  .intro-split, .function-block, .typography-showcase { grid-template-columns: 1fr; gap: 32px; }
+  .function-block.reverse { direction: ltr; }
+  .grid-2, .grid-3, .grid-4, .pages-map { grid-template-columns: 1fr; }
+  .palette-showcase, .seo-pillars, .investment-grid, .design-layouts { grid-template-columns: 1fr 1fr; }
+  .timeline::before { left: 20px; }
+  .timeline-item { grid-template-columns: 1fr; gap: 12px; }
+  .timeline-week { text-align: left; }
+  .timeline-dot { display: none; }
+  .mini-services { grid-template-columns: repeat(2, 1fr); }
+  .portfolio-mini-grid { grid-template-columns: repeat(2, 1fr); }
+  footer { padding: 24px 20px; }
+}
+
+@media print {
+  .cover { min-height: auto; page-break-after: always; }
+  section { padding: 40px 0; page-break-inside: avoid; }
+  .browser-mockup { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     COVER
+══════════════════════════════ -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-badge animate">
+      <div class="cover-badge-dot"></div>
+      <span>Επίσημη Πρόταση Ιστοσελίδας</span>
+    </div>
+
+    <div class="cover-title animate delay-1">
+      Η Νέα σας<br>
+      <span class="accent-line">Ψηφιακή</span><br>
+      Παρουσία
+    </div>
+
+    <p class="cover-subtitle animate delay-2">
+      Αρχιτεκτονική, σχεδιασμός και λειτουργικότητες<br>
+      για την ιστοσελίδα της επιχείρησής σας
+    </p>
+
+    <div class="cover-meta animate delay-3">
+      <div class="cover-meta-item">
+        <span class="meta-label">Κλάδος</span>
+        <span class="meta-val">Κατασκευές Αλουμινίου</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Τύπος Έργου</span>
+        <span class="meta-val">Επαγγελματική Ιστοσελίδα</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Χρονοδιάγραμμα</span>
+        <span class="meta-val">6 Εβδομάδες</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Ημερομηνία</span>
+        <span class="meta-val">Φεβρουάριος 2026</span>
+      </div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <span>ΕΜΠΙΣΤΕΥΤΙΚΟ ΕΓΓΡΑΦΟ — Απευθύνεται αποκλειστικά στον πελάτη</span>
+    <span>© 2026</span>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     INTRO
+══════════════════════════════ -->
+<section class="intro">
+  <div class="wrap">
+    <div class="intro-split">
+      <div>
+        <span class="intro-number">01</span>
+        <p class="label">Ο Στόχος</p>
+        <h2 class="intro-heading">Μια ιστοσελίδα που φέρνει<br><em>πραγματικές δουλειές</em></h2>
+        <p class="intro-body">Σήμερα, ο υποψήφιος πελάτης σας <strong>πηγαίνει πρώτα στο Google</strong> πριν σηκώσει το τηλέφωνο. Αν δεν σας βρει εκεί — ή αν η ιστοσελίδα σας δεν τον πείσει στα πρώτα 5 δευτερόλεπτα — θα καλέσει τον ανταγωνιστή σας.</p>
+        <p class="intro-body" style="margin-top: 12px;">Η ιστοσελίδα που σχεδιάζουμε δεν είναι απλά ένα "ψηφιακό φυλλάδιο". Είναι <strong>το κορυφαίο εργαλείο πωλήσεών σας</strong> — ανοιχτό 24 ώρες, 365 ημέρες.</p>
+
+        <div class="kpi-strip">
+          <div class="kpi">
+            <span class="kpi-num">3"</span>
+            <span class="kpi-label">Χρόνος φόρτωσης ιστοσελίδας</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-num">70%</span>
+            <span class="kpi-label">Αναζητήσεων γίνονται από κινητό</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-num">+40%</span>
+            <span class="kpi-label">Μετατροπές με φωτογραφίες πριν/μετά</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-visual">
+        <div class="browser-mockup">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <span class="bd-r"></span><span class="bd-y"></span><span class="bd-g"></span>
+            </div>
+            <div class="browser-url">🔒 www.yourbusiness.gr</div>
+          </div>
+          <div class="browser-screen">
+            <div class="mini-site">
+              <div class="mini-nav">
+                <div class="mini-logo">ΑΛΟΥΜΙΝΙΟ</div>
+                <div class="mini-nav-links">
+                  <span>Υπηρεσίες</span>
+                  <span>Έργα</span>
+                  <span>Επικοινωνία</span>
+                </div>
+              </div>
+              <div class="mini-hero">
+                <div class="mini-hero-label">Κατασκευές Αλουμινίου</div>
+                <div class="mini-hero-title">Κουφώματα<br>Υψηλής Ποιότητας</div>
+                <div class="mini-hero-sub">30 χρόνια εμπειρία. Δωρεάν επιμέτρηση. Εγγύηση τοποθέτησης.</div>
+                <div class="mini-cta">Κλείστε Ραντεβού →</div>
+              </div>
+              <div class="mini-services">
+                <div class="mini-service-card"><div class="mini-service-icon">🪟</div><div class="mini-service-name">Συρόμενα</div></div>
+                <div class="mini-service-card"><div class="mini-service-icon">🚪</div><div class="mini-service-name">Πόρτες</div></div>
+                <div class="mini-service-card"><div class="mini-service-icon">🏠</div><div class="mini-service-name">Στέγαστρα</div></div>
+                <div class="mini-service-card"><div class="mini-service-icon">🔒</div><div class="mini-service-name">Ασφαλείας</div></div>
+              </div>
+              <div class="mini-projects">
+                <div class="mini-projects-label">Πρόσφατα Έργα</div>
+                <div class="mini-grid">
+                  <div class="mini-project"><div class="mini-project-label">Γλυφάδα — Συρόμενα</div></div>
+                  <div class="mini-project"><div class="mini-project-label">Βούλα — Τζαμαρία</div></div>
+                  <div class="mini-project"><div class="mini-project-label">Αθήνα — Στέγαστρο</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     PAGES / STRUCTURE
+══════════════════════════════ -->
+<section class="pages-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">02 — Δομή Ιστοσελίδας</p>
+      <h2>Ποιες Σελίδες θα Έχετε</h2>
+      <p>Κάθε σελίδα έχει έναν συγκεκριμένο σκοπό: να τραβήξει τον επισκέπτη ένα βήμα πιο κοντά στο να σας καλέσει.</p>
+    </div>
+
+    <div class="pages-map">
+      <div class="page-card featured">
+        <span class="page-icon">🏠</span>
+        <h3>Αρχική Σελίδα</h3>
+        <div class="url-tag">/</div>
+        <p>Η "βιτρίνα" σας. Εντυπωσιακή φωτογραφία έργου, τα βασικά σας πλεονεκτήματα, μικρή προεπισκόπηση υπηρεσιών και portfolio. Το μεγάλο κουμπί "Κλείστε Ραντεβού" σε εμφανές σημείο.</p>
+        <div class="priority high">Υψηλότατη Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card featured">
+        <span class="page-icon">📋</span>
+        <h3>Επικοινωνία & Ραντεβού</h3>
+        <div class="url-tag">/contact</div>
+        <p>Τηλέφωνο με ένα κλικ (για κινητά), φόρμα κλεισίματος ραντεβού, χάρτης, ώρες λειτουργίας. Αυτόματη αποστολή email όταν συμπληρωθεί φόρμα.</p>
+        <div class="priority high">Υψηλότατη Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">🔧</span>
+        <h3>Υπηρεσίες</h3>
+        <div class="url-tag">/services</div>
+        <p>Κατηγοριοποιημένη παρουσίαση όλων των υπηρεσιών σας. Κάθε κατηγορία οδηγεί σε ξεχωριστή σελίδα με φωτογραφίες και τεχνικά χαρακτηριστικά.</p>
+        <div class="priority high">Υψηλή Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">📸</span>
+        <h3>Έργα — Portfolio</h3>
+        <div class="url-tag">/projects</div>
+        <p>Γκαλερί με όλα τα ολοκληρωμένα έργα, φιλτραρισμένα ανά κατηγορία. Κάθε έργο με τοποθεσία, σύστημα αλουμινίου και φωτογραφίες υψηλής ανάλυσης.</p>
+        <div class="priority high">Υψηλή Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">🏢</span>
+        <h3>Η Εταιρεία μας</h3>
+        <div class="url-tag">/about</div>
+        <p>Ιστορία, χρόνια εμπειρίας, ομάδα, πιστοποιήσεις και λογότυπα συστημάτων αλουμινίου (Alumil, Etem κ.λπ.). Χτίζει εμπιστοσύνη.</p>
+        <div class="priority">Μεσαία Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">❓</span>
+        <h3>Συχνές Ερωτήσεις</h3>
+        <div class="url-tag">/faq</div>
+        <p>Απαντά προκαταβολικά στις πιο κοινές απορίες: τι είναι θερμοδιακοπή, πόσο κοστίζει η αλλαγή κουφωμάτων, πόση ώρα παίρνει η τοποθέτηση.</p>
+        <div class="priority">Μεσαία Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">✍️</span>
+        <h3>Blog / Συμβουλές</h3>
+        <div class="url-tag">/blog</div>
+        <p>Χρήσιμα άρθρα για τους πελάτες σας: "Πώς να επιλέξετε κουφώματα", "Ενεργειακή αναβάθμιση σπιτιού". Ανεβάζει την κατάταξη στο Google.</p>
+        <div class="priority">Μεσαία Προτεραιότητα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">🔪</span>
+        <h3>Ξεχωριστή σελίδα / Υπηρεσία</h3>
+        <div class="url-tag">/services/[υπηρεσία]</div>
+        <p>Κάθε υπηρεσία (π.χ. Συρόμενα, Πόρτες Ασφαλείας) έχει δική της σελίδα με λεπτομέρειες, γκαλερί και CTA. Ιδανική για Google Ads.</p>
+        <div class="priority">Παράγωγη Σελίδα</div>
+      </div>
+
+      <div class="page-card">
+        <span class="page-icon">🗂️</span>
+        <h3>Σελίδα Έργου</h3>
+        <div class="url-tag">/projects/[τίτλος]</div>
+        <p>Κάθε έργο έχει δική του σελίδα: πλήρης γκαλερί, φωτογραφίες πριν/μετά, σύστημα αλουμινίου, τοποθεσία και μαρτυρία πελάτη.</p>
+        <div class="priority">Παράγωγη Σελίδα</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     FUNCTIONALITIES
+══════════════════════════════ -->
+<section class="functions-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">03 — Λειτουργικότητες</p>
+      <h2>Τι Μπορεί να Κάνει<br>η Ιστοσελίδα σας</h2>
+      <p>Πέρα από το να "φαίνεται ωραία", η ιστοσελίδα σας θα είναι εξοπλισμένη με ευφυείς λειτουργίες που διευκολύνουν τόσο εσάς όσο και τους πελάτες σας.</p>
+    </div>
+
+    <!-- FUNCTIONALITY 1 -->
+    <div class="function-block">
+      <div>
+        <span class="function-number">01</span>
+        <p class="label">Portfolio</p>
+        <h3 class="function-heading">Γκαλερί Έργων με Έξυπνο Φιλτράρισμα</h3>
+        <p class="function-desc">Ο επισκέπτης βλέπει μεμιάς τη δουλειά σας — και επιλέγει τι τον ενδιαφέρει. Δεν χρειάζεται να ψάχνει. Κάθε έργο που προσθέτετε εσείς εμφανίζεται αυτόματα στη σωστή κατηγορία.</p>
+        <ul class="feature-list">
+          <li>Φιλτράρισμα ανά κατηγορία: Συρόμενα, Πόρτες, Στέγαστρα, Κιγκλιδώματα</li>
+          <li>Φωτογραφίες <strong>πριν και μετά</strong> (αποδεδειγμένα αυξάνουν τις πωλήσεις)</li>
+          <li>Κάθε έργο με τοποθεσία, σύστημα αλουμινίου και περιγραφή</li>
+          <li>Εσείς προσθέτετε νέα έργα χωρίς να χρειαστείτε developer</li>
+        </ul>
+      </div>
+      <div>
+        <div class="ui-panel">
+          <div class="ui-panel-header">
+            <span class="ui-panel-title">📸 Έργα μας — Portfolio</span>
+          </div>
+          <div class="ui-panel-body">
+            <div class="filter-tabs">
+              <div class="filter-tab active">Όλα</div>
+              <div class="filter-tab">Συρόμενα</div>
+              <div class="filter-tab">Ανοιγόμενα</div>
+              <div class="filter-tab">Στέγαστρα</div>
+              <div class="filter-tab">Κιγκλιδώματα</div>
+              <div class="filter-tab">Πόρτες</div>
+            </div>
+            <div class="portfolio-mini-grid">
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Γλυφάδα</span></div></div>
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Βούλα</span></div></div>
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Αθήνα</span></div></div>
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Παλαιό Φάληρο</span></div></div>
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Καλλιθέα</span></div></div>
+              <div class="p-thumb"><div class="p-thumb-bg"></div><div class="p-thumb-overlay"><span>Αλιμος</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNCTIONALITY 2 -->
+    <div class="function-block reverse">
+      <div>
+        <div class="ui-panel">
+          <div class="ui-panel-header">
+            <span class="ui-panel-title">📅 Κλείστε Ραντεβού</span>
+          </div>
+          <div class="ui-panel-body">
+            <div class="form-mock">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Ονοματεπώνυμο</label>
+                  <div class="form-field-input filled">Γιώργης Παπαδόπουλος</div>
+                </div>
+                <div class="form-field">
+                  <label>Τηλέφωνο</label>
+                  <div class="form-field-input filled">69X XXX XXXX</div>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Τύπος Υπηρεσίας</label>
+                <div class="form-field-input">Συρόμενα κουφώματα ▾</div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Προτιμώμενη Ημέρα</label>
+                  <div class="form-field-input">Τρίτη 18/03 ▾</div>
+                </div>
+                <div class="form-field">
+                  <label>Ώρα</label>
+                  <div class="form-field-input">11:00 π.μ. ▾</div>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Διεύθυνση / Σχόλια</label>
+                <div class="form-field-input" style="min-height:40px;">Ζωγράφου, Αθήνα — 3ο πάτωμα</div>
+              </div>
+              <div class="form-submit">✓ Αποστολή Αιτήματος Ραντεβού</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <span class="function-number">02</span>
+        <p class="label">Φόρμα Επικοινωνίας</p>
+        <h3 class="function-heading">Αυτόματη Φόρμα Κλεισίματος Ραντεβού</h3>
+        <p class="function-desc">Ο πελάτης συμπληρώνει τα στοιχεία του, επιλέγει ημερομηνία και υπηρεσία, και εσείς λαμβάνετε αμέσως email με όλες τις λεπτομέρειες. Δεν χάνετε καμία επικοινωνία.</p>
+        <ul class="feature-list">
+          <li>Αυτόματο email σε εσάς με τα στοιχεία του πελάτη</li>
+          <li>Αυτόματο email επιβεβαίωσης στον πελάτη</li>
+          <li>Επιλογή κατηγορίας υπηρεσίας (Συρόμενα, Πόρτες…)</li>
+          <li>Προτιμώμενη ημερομηνία και ώρα επίσκεψης</li>
+          <li>Λειτουργεί τέλεια σε κινητά — ένα κλικ για κλήση</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FUNCTIONALITY 3 -->
+    <div class="function-block">
+      <div>
+        <span class="function-number">03</span>
+        <p class="label">Περιεχόμενο & Blog</p>
+        <h3 class="function-heading">Σύστημα Διαχείρισης Περιεχομένου — Χωρίς Κώδικα</h3>
+        <p class="function-desc">Θα έχετε ένα απλό, καθαρό πίνακα διαχείρισης — σαν το Google Docs — από τον οποίο μπορείτε μόνοι σας να προσθέτετε νέα έργα, να γράφετε άρθρα και να ενημερώνετε τιμές ή υπηρεσίες.</p>
+        <ul class="feature-list">
+          <li>Ανέβασμα νέου έργου με φωτογραφίες σε λιγότερο από 5 λεπτά</li>
+          <li>Γραφή άρθρων blog χωρίς τεχνικές γνώσεις</li>
+          <li>Ενημέρωση στοιχείων επικοινωνίας, ωραρίου, υπηρεσιών</li>
+          <li>Πλήρης εκπαίδευση παραδίδεται στην παράδοση του site</li>
+        </ul>
+      </div>
+      <div>
+        <div class="ui-panel">
+          <div class="ui-panel-header">
+            <span class="ui-panel-title">✍️ Blog — Άρθρα</span>
+          </div>
+          <div class="ui-panel-body">
+            <div class="blog-preview-list">
+              <div class="blog-preview-item">
+                <div class="blog-preview-thumb" style="background:linear-gradient(135deg,#8fa3b1,#667d8a)"></div>
+                <div class="blog-preview-content">
+                  <span class="blog-preview-tag">Συμβουλές</span>
+                  <span class="blog-preview-title">Πώς να επιλέξετε κουφώματα αλουμινίου για το σπίτι σας</span>
+                  <span class="blog-preview-meta">12 Φεβρουαρίου 2026 · 5 λεπτά ανάγνωσης</span>
+                </div>
+              </div>
+              <div class="blog-preview-item">
+                <div class="blog-preview-thumb" style="background:linear-gradient(135deg,#a0b4c2,#7c97a6)"></div>
+                <div class="blog-preview-content">
+                  <span class="blog-preview-tag">Τεχνολογία</span>
+                  <span class="blog-preview-title">Τι είναι η θερμοδιακοπή και γιατί την χρειάζεστε;</span>
+                  <span class="blog-preview-meta">28 Ιανουαρίου 2026 · 4 λεπτά ανάγνωσης</span>
+                </div>
+              </div>
+              <div class="blog-preview-item">
+                <div class="blog-preview-thumb" style="background:linear-gradient(135deg,#b0c1cd,#8aa0ae)"></div>
+                <div class="blog-preview-content">
+                  <span class="blog-preview-tag">Ανακαίνιση</span>
+                  <span class="blog-preview-title">Αλλαγή κουφωμάτων: Πόσο κοστίζει και τι να προσέξετε</span>
+                  <span class="blog-preview-meta">10 Ιανουαρίου 2026 · 6 λεπτά ανάγνωσης</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNCTIONALITY 4 -->
+    <div class="function-block reverse">
+      <div>
+        <div class="ui-panel">
+          <div class="ui-panel-header">
+            <span class="ui-panel-title">❓ Συχνές Ερωτήσεις</span>
+          </div>
+          <div class="ui-panel-body" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:6px;padding:12px 14px;">
+              <div style="font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:6px;">▼ Πόσο χρόνο παίρνει η τοποθέτηση κουφωμάτων;</div>
+              <div style="font-size:.72rem;color:var(--ink-light);line-height:1.5;">Η τοποθέτηση σε ένα τυπικό διαμέρισμα (8-10 κουφώματα) ολοκληρώνεται σε 1-2 εργάσιμες ημέρες. Δεν θα ενοχλήσουμε τους ενοίκους περισσότερο από ό,τι χρειάζεται.</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;">
+              <div style="font-size:.78rem;font-weight:500;color:var(--ink-light);">▶ Τι εγγύηση δίνετε για τα κουφώματα;</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;">
+              <div style="font-size:.78rem;font-weight:500;color:var(--ink-light);">▶ Κάνετε δωρεάν επιμέτρηση;</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;">
+              <div style="font-size:.78rem;font-weight:500;color:var(--ink-light);">▶ Τι είναι η θερμοδιακοπή και χρειάζομαι κουφώματα με αυτή;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <span class="function-number">04</span>
+        <p class="label">Εξυπηρέτηση Πελατών</p>
+        <h3 class="function-heading">Σελίδα Συχνών Ερωτήσεων — FAQ</h3>
+        <p class="function-desc">Κάθε πελάτης έχει τις ίδιες 10 ερωτήσεις πριν αγοράσει. Αντί να τις απαντάτε τηλεφωνικά κάθε φορά, η ιστοσελίδα τις απαντά αυτόματα — 24/7.</p>
+        <ul class="feature-list">
+          <li>Άμεσες απαντήσεις σε ερωτήσεις τιμολόγησης, χρόνου, εγγυήσεων</li>
+          <li>Εξηγεί τεχνικούς όρους με απλά λόγια (θερμοδιακοπή, ενεργειακό τζάμι κ.λπ.)</li>
+          <li>Βοηθά τον πελάτη να αποφασίσει γρηγορότερα</li>
+          <li>Ανεβάζει σημαντικά την κατάταξη στο Google</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     DESIGN
+══════════════════════════════ -->
+<section class="design-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">04 — Αισθητική & Design</p>
+      <h2>Πώς θα Φαίνεται</h2>
+      <p>Ο σχεδιασμός αποπνέει εμπιστοσύνη, ποιότητα και επαγγελματισμό — ακριβώς αυτά που θέλετε ο πελάτης να νιώσει για την επιχείρησή σας.</p>
+    </div>
+
+    <div class="palette-showcase">
+      <div class="palette-swatch sw-steel">
+        <span class="swatch-name">Κύριο Χρώμα — Steel</span>
+        <span class="swatch-hex">#1C2B3A</span>
+      </div>
+      <div class="palette-swatch sw-gold">
+        <span class="swatch-name">Accent — Gold</span>
+        <span class="swatch-hex">#B08D57</span>
+      </div>
+      <div class="palette-swatch sw-light">
+        <span class="swatch-name">Ανοιχτό</span>
+        <span class="swatch-hex">#E8E2D5</span>
+      </div>
+      <div class="palette-swatch sw-sheet">
+        <span class="swatch-name">Φόντο</span>
+        <span class="swatch-hex">#F8F7F4</span>
+      </div>
+    </div>
+
+    <div class="typography-showcase">
+      <div class="type-sample">
+        <p class="type-label">Display Font — Τίτλοι</p>
+        <div class="type-specimen-display">ΚΟΥΦΩΜΑΤΑ<br>ΑΛΟΥΜΙΝΙΟΥ</div>
+      </div>
+      <div class="type-sample">
+        <p class="type-label">Serif Italic — Υπότιτλοι</p>
+        <div class="type-specimen-serif">"Ποιότητα που<br>μιλά μόνη της."</div>
+      </div>
+      <div class="type-sample">
+        <p class="type-label">Body — Κείμενο</p>
+        <div class="type-specimen-body">Η εταιρεία μας ειδικεύεται στην κατασκευή και τοποθέτηση κουφωμάτων αλουμινίου υψηλής ποιότητας. Χρησιμοποιούμε αποκλειστικά συστήματα Alumil με πιστοποίηση ενεργειακής απόδοσης.</div>
+      </div>
+      <div class="type-sample">
+        <p class="type-label">Call to Action Buttons</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <div style="background:var(--gold);color:white;padding:12px 24px;border-radius:6px;font-size:.9rem;font-weight:600;text-align:center;">Κλείστε Δωρεάν Ραντεβού Επιμέτρησης →</div>
+          <div style="border:2px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);padding:11px 24px;border-radius:6px;font-size:.9rem;font-weight:600;text-align:center;">📞 Καλέστε μας τώρα</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-layouts">
+      <div class="layout-card">
+        <div class="layout-preview">
+          <div class="wf-bar"></div>
+          <div class="wf-hero">
+            <div class="wf-hero-text">
+              <div class="wf-h" style="width:80%"></div>
+              <div class="wf-h" style="width:60%"></div>
+              <div class="wf-p" style="width:90%;margin-top:4px"></div>
+              <div class="wf-btn" style="margin-top:8px"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px 0;">
+            <div style="background:white;border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <div style="background:var(--gold-light);width:20px;height:20px;border-radius:50%"></div>
+              <div class="wf-text-sm" style="width:80%"></div>
+            </div>
+            <div style="background:white;border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <div style="background:var(--gold-light);width:20px;height:20px;border-radius:50%"></div>
+              <div class="wf-text-sm" style="width:80%"></div>
+            </div>
+            <div style="background:white;border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <div style="background:var(--gold-light);width:20px;height:20px;border-radius:50%"></div>
+              <div class="wf-text-sm" style="width:80%"></div>
+            </div>
+            <div style="background:white;border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <div style="background:var(--gold-light);width:20px;height:20px;border-radius:50%"></div>
+              <div class="wf-text-sm" style="width:80%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="layout-meta">
+          <h4>Αρχική Σελίδα</h4>
+          <p>Hero + Κατηγορίες + Portfolio strip</p>
+        </div>
+      </div>
+
+      <div class="layout-card">
+        <div class="layout-preview">
+          <div class="wf-bar"></div>
+          <div style="padding:8px 0;flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+              <div style="background:var(--steel);color:white;font-size:.45rem;padding:3px 8px;border-radius:100px;">Όλα</div>
+              <div style="background:white;border:1px solid var(--rule);font-size:.45rem;padding:3px 8px;border-radius:100px;color:var(--mist);">Συρόμενα</div>
+              <div style="background:white;border:1px solid var(--rule);font-size:.45rem;padding:3px 8px;border-radius:100px;color:var(--mist);">Πόρτες</div>
+            </div>
+            <div class="wf-masonry" style="flex:1;">
+              <div class="wf-tall"></div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <div class="wf-short"></div>
+                <div class="wf-short2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layout-meta">
+          <h4>Portfolio</h4>
+          <p>Masonry grid με φίλτρα κατηγορίας</p>
+        </div>
+      </div>
+
+      <div class="layout-card">
+        <div class="layout-preview">
+          <div class="wf-bar"></div>
+          <div style="padding:8px 0;flex:1;display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--steel);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+              <div class="wf-h" style="width:70%;background:rgba(255,255,255,.8)"></div>
+              <div class="wf-p" style="width:100%"></div>
+              <div class="wf-p" style="width:80%"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="background:white;border:1px solid var(--rule);border-radius:4px;padding:8px;display:flex;gap:6px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#c5d0da,#99aebb);border-radius:3px;flex-shrink:0;"></div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div class="wf-text-sm" style="width:120px;background:var(--gold-light)"></div>
+                  <div class="wf-text-sm" style="width:90px"></div>
+                </div>
+              </div>
+              <div style="background:white;border:1px solid var(--rule);border-radius:4px;padding:8px;display:flex;gap:6px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#8fa3b1,#667d8a);border-radius:3px;flex-shrink:0;"></div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div class="wf-text-sm" style="width:100px;background:var(--gold-light)"></div>
+                  <div class="wf-text-sm" style="width:80px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="layout-meta">
+          <h4>Blog</h4>
+          <p>Άρθρα με hero + λίστα αρθρων</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     SEO
+══════════════════════════════ -->
+<section class="seo-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">05 — Ορατότητα στο Google</p>
+      <h2>Πώς θα σας Βρίσκουν<br>οι Πελάτες σας</h2>
+      <p>Μια όμορφη ιστοσελίδα που δεν την βρίσκει κανείς δεν αξίζει τίποτα. Χτίζουμε το site από τη βάση του για να κατατάσσεται ψηλά στο Google.</p>
+    </div>
+
+    <div class="seo-pillars">
+      <div class="seo-pillar">
+        <div class="seo-pillar-icon">📍</div>
+        <h4>Τοπικό SEO</h4>
+        <p>Εμφανίζεστε όταν κάποιος ψάχνει "κουφώματα αλουμινίου [η πόλη σας]" στο Google.</p>
+      </div>
+      <div class="seo-pillar">
+        <div class="seo-pillar-icon">⚡</div>
+        <h4>Ταχύτητα</h4>
+        <p>Σελίδες που φορτώνουν σε κάτω από 2 δευτερόλεπτα — ο Google τις προτιμά και οι πελάτες δεν φεύγουν.</p>
+      </div>
+      <div class="seo-pillar">
+        <div class="seo-pillar-icon">📱</div>
+        <h4>Mobile First</h4>
+        <p>70% των αναζητήσεων γίνεται από κινητό. Το site λειτουργεί τέλεια σε κάθε συσκευή.</p>
+      </div>
+      <div class="seo-pillar">
+        <div class="seo-pillar-icon">✍️</div>
+        <h4>Περιεχόμενο</h4>
+        <p>Blog άρθρα με στοχευμένες λέξεις-κλειδιά φέρνουν νέους επισκέπτες κάθε μέρα, δωρεάν.</p>
+      </div>
+    </div>
+
+    <div class="google-preview">
+      <p class="gp-label">Πώς θα εμφανίζεστε στο Google Search</p>
+      <div class="gp-url">yourbusiness.gr › ‹ κουφώματα ›</div>
+      <div class="gp-title">Κουφώματα Αλουμινίου [Πόλη] — Δωρεάν Επιμέτρηση | [Εταιρεία]</div>
+      <div class="gp-desc">Κατασκευή και τοποθέτηση κουφωμάτων αλουμινίου, τζαμαριών, στεγάστρων και πορτών ασφαλείας στην [Πόλη]. Δωρεάν επιμέτρηση, εγγύηση τοποθέτησης. 30 χρόνια εμπειρία.</div>
+      <div class="gp-sitelinks">
+        <span class="sitelink">Υπηρεσίες</span>
+        <span class="sitelink">Portfolio Έργων</span>
+        <span class="sitelink">Τιμές</span>
+        <span class="sitelink">Επικοινωνία</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     TIMELINE
+══════════════════════════════ -->
+<section class="timeline-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">06 — Χρονοδιάγραμμα</p>
+      <h2>Πότε θα είναι Έτοιμα</h2>
+      <p>6 εβδομάδες από την εκκίνηση μέχρι την παράδοση. Σε κάθε φάση σας ενημερώνουμε και εγκρίνετε πριν προχωρήσουμε.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">01</div>
+        </div>
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <h4>Θεμελίωση & Στρατηγική</h4>
+          <p>Ανάλυση της επιχείρησής σας, επιλογή χρωμάτων και στυλ, στήσιμο του συστήματος διαχείρισης, δομή σελίδων.</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag gold">Απαιτείται συνεργασία</span>
+            <span class="timeline-tag">Σχεδιασμός</span>
+            <span class="timeline-tag">Στρατηγική</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">02</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Αρχική Σελίδα & Ταυτότητα</h4>
+          <p>Σχεδιασμός της αρχικής σελίδας, header, footer και γενικής αισθητικής. Πρώτη έγκριση από εσάς.</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag gold">Έγκριση Design ✓</span>
+            <span class="timeline-tag">Homepage</span>
+            <span class="timeline-tag">UI Components</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">03</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Portfolio & Υπηρεσίες</h4>
+          <p>Γκαλερί έργων με φίλτρα, ξεχωριστές σελίδες υπηρεσιών, σελίδες μεμονωμένου έργου.</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag gold">Ανεβάστε τις φωτογραφίες σας</span>
+            <span class="timeline-tag">Portfolio</span>
+            <span class="timeline-tag">Services</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">04</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Επικοινωνία, FAQ & Εταιρεία</h4>
+          <p>Φόρμα ραντεβού με αυτόματα emails, σελίδα FAQ, σελίδα "Η Εταιρεία μας", χάρτης.</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Φόρμες</span>
+            <span class="timeline-tag">FAQ</span>
+            <span class="timeline-tag">About</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">05</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Blog & SEO Βελτιστοποίηση</h4>
+          <p>Δημοσίευση πρώτων άρθρων, βελτιστοποίηση Google, υποβολή στο Google Search Console.</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Blog</span>
+            <span class="timeline-tag">SEO</span>
+            <span class="timeline-tag">Google Indexing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-week">
+          <div class="week-label">Εβδομάδα</div>
+          <div class="week-name">06</div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Δοκιμές, Εκπαίδευση & Παράδοση 🎉</h4>
+          <p>Τελική δοκιμή σε κινητά και υπολογιστές, εκπαίδευση χρήσης του πίνακα διαχείρισης, σύνδεση domain, go live!</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag gold">Παράδοση & Go Live</span>
+            <span class="timeline-tag">Εκπαίδευση</span>
+            <span class="timeline-tag">QA Testing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     INVESTMENT
+══════════════════════════════ -->
+<section class="investment-section">
+  <div class="wrap">
+    <div class="section-header">
+      <p class="label">07 — Τι Περιλαμβάνεται</p>
+      <h2>Φάσεις Υλοποίησης</h2>
+      <p>Ξεκινάμε με αυτό που χρειάζεστε τώρα και επεκτεινόμαστε αργότερα.</p>
+    </div>
+
+    <div class="investment-grid">
+      <div class="investment-card">
+        <div class="inv-phase">Φάση 1 — Άμεση Ανάγκη</div>
+        <h3>Βασική Παρουσία</h3>
+        <p class="inv-desc">Ό,τι χρειάζεστε για να αρχίσετε να παράγετε leads αμέσως.</p>
+        <ul class="inv-list">
+          <li class="inv-item">Αρχική σελίδα με Hero + CTA</li>
+          <li class="inv-item">Σελίδα Portfolio Έργων</li>
+          <li class="inv-item">Σελίδα Υπηρεσιών</li>
+          <li class="inv-item">Φόρμα Επικοινωνίας με Email</li>
+          <li class="inv-item">Βελτιστοποίηση για Google</li>
+          <li class="inv-item">Πλήρης λειτουργία σε κινητά</li>
+        </ul>
+      </div>
+
+      <div class="investment-card featured">
+        <div class="inv-phase">Φάση 1+2 — Προτεινόμενο</div>
+        <h3>Πλήρης Ψηφιακή Παρουσία</h3>
+        <p class="inv-desc">Η ολοκληρωμένη λύση που σας κάνει αναφορά στον κλάδο.</p>
+        <ul class="inv-list">
+          <li class="inv-item">Όλα από τη Φάση 1</li>
+          <li class="inv-item">Blog με άρθρα SEO</li>
+          <li class="inv-item">Σελίδα FAQ</li>
+          <li class="inv-item">Σελίδα "Η Εταιρεία"</li>
+          <li class="inv-item">Ξεχωριστή σελίδα ανά υπηρεσία</li>
+          <li class="inv-item">Σελίδα ανά έργο (case study)</li>
+          <li class="inv-item">Εκπαίδευση πίνακα διαχείρισης</li>
+        </ul>
+      </div>
+
+      <div class="investment-card">
+        <div class="inv-phase">Φάση 3 — Μελλοντική Επέκταση</div>
+        <h3>B2B Πύλη Επαγγελματιών</h3>
+        <p class="inv-desc">Ειδική περιοχή για μηχανικούς, κατασκευαστές και αρχιτέκτονες.</p>
+        <ul class="inv-list">
+          <li class="inv-item">Σύνδεση λογαριασμού (μηχανικοί)</li>
+          <li class="inv-item">Τιμοκατάλογος Χονδρικής</li>
+          <li class="inv-item">Τεχνικά Σχέδια CAD για download</li>
+          <li class="inv-item">Απευθείας παραγγελίες</li>
+          <li class="inv-item">Ιστορικό παραγγελιών</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="investment-note">
+      <div class="investment-note-icon">💡</div>
+      <div>
+        <p><strong>Η σύστασή μας:</strong> Ξεκινήστε με τη Φάση 1+2. Αυτό είναι το 90% της αξίας — φέρνει πελάτες, δείχνει επαγγελματισμό και ανεβάζει τη θέση σας στο Google. Η Φάση 3 (B2B portal) είναι επένδυση για αργότερα, όταν έχετε ήδη αποδείξει ότι η ιστοσελίδα φέρνει αποτελέσματα.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ══════════════════════════════
+     CTA
+══════════════════════════════ -->
+<section class="cta-section">
+  <p class="label" style="margin-bottom:16px;">Έτοιμοι να Ξεκινήσουμε;</p>
+  <h2>Ας Χτίσουμε Κάτι<br>Εξαιρετικό Μαζί</h2>
+  <p>Το επόμενο βήμα είναι μια σύντομη συνάντηση για να απαντήσετε μερικές βασικές ερωτήσεις. Από εκεί, αναλαμβάνουμε εμείς τα πάντα.</p>
+  <div class="cta-buttons">
+    <a href="#" class="btn-primary">Ξεκινήστε τη Συνεργασία →</a>
+    <a href="#" class="btn-secondary">Δείτε Δείγματα Δουλειών</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     FOOTER
+══════════════════════════════ -->
+<footer>
+  <span class="footer-logo">ΠΡOΤΑΣΗ ΙΣΤOΣΕΛIΔΑΣ</span>
+  <span>Κατασκευές Αλουμινίου — Εμπιστευτικό έγγραφο · 2026</span>
+  <span>Προετοιμάστηκε από την ομάδα ανάπτυξης</span>
+</footer>
+
+<script>
+  // Animate elements on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.page-card, .seo-pillar, .investment-card, .function-block, .timeline-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .55s ease, transform .55s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

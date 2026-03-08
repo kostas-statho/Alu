@@ -91,12 +91,12 @@ export default async function ExoikonomwPage() {
               Ποσοστά Επιδότησης
             </h2>
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-              <table className="w-full">
+              <table className="w-full text-sm sm:text-base">
                 <thead>
                   <tr className="bg-primary-600 text-white">
-                    <th className="px-6 py-4 text-left font-semibold">Κατηγορία</th>
-                    <th className="px-6 py-4 text-left font-semibold">Επιδότηση</th>
-                    <th className="px-6 py-4 text-left font-semibold">Μέγ. Προϋπολογισμός</th>
+                    <th className="px-3 py-3 text-left font-semibold sm:px-6 sm:py-4">Κατηγορία</th>
+                    <th className="px-3 py-3 text-left font-semibold sm:px-6 sm:py-4">Επιδότηση</th>
+                    <th className="hidden px-3 py-3 text-left font-semibold sm:table-cell sm:px-6 sm:py-4">Μέγ. Προϋπολογισμός</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,11 +106,11 @@ export default async function ExoikonomwPage() {
                       i: number
                     ) => (
                       <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                        <td className="px-6 py-4 font-medium text-slate-900">{tier.category}</td>
-                        <td className="px-6 py-4 font-semibold text-primary-600">
+                        <td className="px-3 py-3 font-medium text-slate-900 sm:px-6 sm:py-4">{tier.category}</td>
+                        <td className="px-3 py-3 font-semibold text-primary-600 sm:px-6 sm:py-4">
                           {tier.percentage}
                         </td>
-                        <td className="px-6 py-4 text-slate-600">{tier.maxBudget}</td>
+                        <td className="hidden px-3 py-3 text-slate-600 sm:table-cell sm:px-6 sm:py-4">{tier.maxBudget}</td>
                       </tr>
                     )
                   )}
@@ -160,8 +160,8 @@ export default async function ExoikonomwPage() {
             <div className="space-y-6">
               {processSteps.map(
                 (step: { stepNumber: number; title: string; description: string }) => (
-                  <div key={step.stepNumber} className="flex gap-4">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-600 font-bold text-white">
+                  <div key={step.stepNumber} className="flex gap-3 sm:gap-4">
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white sm:h-10 sm:w-10 sm:text-base">
                       {step.stepNumber}
                     </div>
                     <div>

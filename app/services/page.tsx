@@ -36,9 +36,9 @@ export default async function ServicesPage() {
 
       <section className="bg-slate-50 py-16 md:py-24">
         <Container>
-          <div className="flex flex-col items-center gap-8 md:flex-row">
-            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-600">
-              <Award className="h-10 w-10" />
+          <div className="flex flex-col items-center gap-5 sm:gap-8 md:flex-row">
+            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-600 sm:h-20 sm:w-20">
+              <Award className="h-8 w-8 sm:h-10 sm:w-10" />
             </div>
             <div className="text-center md:text-left">
               <h2 className="font-heading text-2xl font-bold text-slate-900 md:text-3xl">

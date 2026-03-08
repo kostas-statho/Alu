@@ -96,13 +96,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 Τεχνικά Χαρακτηριστικά
               </h2>
               <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                <table className="w-full">
+                <table className="w-full text-sm sm:text-base">
                   <tbody>
                     {service.specs.map(
                       (spec: { label: string; value: string }, i: number) => (
                         <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                          <td className="px-6 py-4 font-medium text-slate-900">{spec.label}</td>
-                          <td className="px-6 py-4 text-slate-600">{spec.value}</td>
+                          <td className="px-3 py-3 font-medium text-slate-900 sm:px-6 sm:py-4">{spec.label}</td>
+                          <td className="px-3 py-3 text-slate-600 sm:px-6 sm:py-4">{spec.value}</td>
                         </tr>
                       )
                     )}

@@ -47,7 +47,7 @@ export default async function ContactPage() {
 
       <section className="py-16 md:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-3">
+          <div className="grid gap-8 md:gap-12 lg:grid-cols-3">
             <div>
               <h2 className="mb-6 font-heading text-2xl font-bold text-slate-900">
                 Στοιχεία Επικοινωνίας

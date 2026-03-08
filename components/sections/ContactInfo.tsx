@@ -65,7 +65,7 @@ export default function ContactInfo({
         </div>
       )}
 
-      <div className="flex gap-3 pt-2">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
         <a
           href={`https://wa.me/${whatsappNumber}`}
           target="_blank"

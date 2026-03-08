@@ -21,7 +21,7 @@ export default function ExoikonomwBanner() {
           <Button
             href="/exoikonomw"
             size="lg"
-            className="flex-shrink-0 bg-white text-primary-700 hover:bg-slate-100"
+            className="w-full flex-shrink-0 bg-white text-primary-700 hover:bg-slate-100 md:w-auto"
           >
             Μάθετε Περισσότερα
           </Button>

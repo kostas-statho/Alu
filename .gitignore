@@ -35,3 +35,25 @@ next-env.d.ts
 
 # sanity
 .sanity/
+
+# discovery & planning docs (not part of the deployed app)
+01_discovery/
+02_proposal/
+03_planning/
+04_architecture/
+05_pages/
+06_deployment/
+07_offer/
+build/
+
+# legacy root files
+/*.pdf
+/*.html
+/*.png
+deploy.sh
+test-e2e.js
+
+# screenshots & export
+screenshots/
+export/
+screenshot.mjs
